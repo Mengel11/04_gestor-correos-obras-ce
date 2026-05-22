@@ -1,120 +1,76 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [nuevaObra, setNuevaObra] = useState(false)
+  const [obra, setObra] = useState({titulo: '', clasificacion: ''})
+  const [obras, setObras] = useState([])
+  const [mensaje, setMensaje] = useState('')
+
+  const handleChangeObra = (e) => {
+    setObra({...obra, [e.target.name]: e.target.value})
+  }
+
+  const handleCancelarObra = () => {
+    setNuevaObra(false)
+    setObra({titulo: '', clasificacion: ''})
+  }
+
+  const handleSubmitObra = (e) => {
+    e.preventDefault()
+
+    // Validar que los campos no estén vacíos
+    if(!obra.titulo.trim() || !obra.clasificacion) {
+      setMensaje('Por favor, completa todos los campos')
+      setTimeout(() => {
+        setMensaje('')
+      }, 2000)
+      return
+    }
+
+    // Si la validación es exitosa entonces guardar la obra, escondes el formulario y muestras un mensaje de éxito
+    setObras([...obras, obra])
+    setObra({titulo: '', clasificacion: ''})
+    setNuevaObra(false)
+    setMensaje('Obra guardada exitosamente')
+    setTimeout(() => {
+      setMensaje('')
+    }, 2000)
+  }
 
   return (
     <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
+      <button onClick={() => setNuevaObra(true)}>Nueva Obra</button>
+      {nuevaObra && (
+        <form onSubmit={handleSubmitObra}>
+          <label>
+            Titulo:
+            <input type="text" name="titulo" value={obra.titulo} onChange={handleChangeObra}/>
+          </label>
+          <label>
+            Clasificación:
+            <select name="clasificacion" value={obra.clasificacion} onChange={handleChangeObra}>
+              <option value="" disabled hidden>Selecciona una opción</option>
+              <option value="libro de texto">Libro de texto</option>
+              <option value="libro cientifico">Libro científico</option>
+              <option value="notas de curso normal">Notas de curso normal</option>
+              <option value="notas de curso especial">Notas de curso especial</option>
+              <option value="paquete de computo de docencia">Paquete de computo de docencia</option>
+              <option value="paquete de computo cientifico">Paquete de cómputo científico</option>
+              <option value="libro de divulgacion">Libro de divulgación</option>
+            </select>
+            <button type="submit">Guardar</button>
+            <button type="button" onClick={handleCancelarObra}>Cancelar</button>
+          </label>
+        </form>
+      )}
+      <ul>
+        {obras.map((obra, index) => (
+          <li key={index}>{obra.titulo}-{obra.clasificacion}</li>
+        ))}
+      </ul>
+      {mensaje && (
+        <p>{mensaje}</p>
+      )}
     </>
   )
 }
