@@ -3,11 +3,7 @@ import { useState } from 'react'
 function Obras() {
   const [nuevaObra, setNuevaObra] = useState(false)
   const [mostrarAutoresDisponibles, setMostrarAutoresDisponibles] = useState(false)
-  const [obra, setObra] = useState({
-    titulo: '', 
-    clasificacion: '', 
-    autores: []
-  })
+  const [obra, setObra] = useState({ titulo: '', clasificacion: '', autores: [] })
   const [obras, setObras] = useState([])
   const [autoresDisponibles, setAutoresDisponibles] = useState([
     {id: 1, nombre: 'Autor 1', apellido: 'Apellido 1', email: 'autor1@example.com'},
@@ -18,7 +14,8 @@ function Obras() {
   const [mensaje, setMensaje] = useState('')
 
   const handleChangeObra = (e) => {
-    setObra({...obra, [e.target.name]: e.target.value})
+    const { name, value } = e.target
+    setObra({...obra, [name]: value})
   }
 
   const handleClickAutor = (id) => {
