@@ -1,19 +1,16 @@
 import { useState, useEffect } from 'react'
 import { registrarAutor, obtenerAutores, eliminarAutor, actualizarAutor } from '../services/autoresService'
-import TarjetaAutor from '../components/TarjetaAutor'
+import { validarEmail } from '../utils/validaciones'
+import FormularioAutor from '../components/FormularioAutor'
+import ListaAutores from '../components/ListaAutores'
 
-const validarEmail = (email) => {
-  const todoMenosEspaciosNiArrobas = '[^\\s@]+'
-  const regex = new RegExp(`^${todoMenosEspaciosNiArrobas}@${todoMenosEspaciosNiArrobas}\\.${todoMenosEspaciosNiArrobas}$`)
-  return regex.test(email)
-}
 
 function Autores() {
     const [mostrarFormulario, setMostrarFormulario] = useState(false)
-    const [autor, setAutor] = useState({nombre:'', apellidoPaterno:'', apellidoMaterno:'', correo:''})
+    const [autorFormulario, setAutorFormulario] = useState({nombre:'', apellidoPaterno:'', apellidoMaterno:'', correo:''})
     const [mensaje, setMensaje] = useState('')
     const [autores, setAutores] = useState([])
-
+    
     const cargarAutores = async () => {
         try {
             const autoresObtenidos = await obtenerAutores()
@@ -32,19 +29,19 @@ function Autores() {
     
     const handleChangeAutor = (e) => {
         const { name, value } = e.target
-        setAutor(prev => ({ ...prev, [name]: value }))
+        setAutorFormulario(prev => ({ ...prev, [name]: value }))
     }
 
     const handleCancelarFormulario = () => {
         setMostrarFormulario(false)
-        setAutor({nombre:'', apellidoPaterno:'', apellidoMaterno:'', correo:''})
+        setAutorFormulario({nombre:'', apellidoPaterno:'', apellidoMaterno:'', correo:''})
     }
     
     const handleSubmitAutor = async (e) => {
         e.preventDefault()
 
         // Validar que los campos no estén vacíos
-        if(!autor.nombre.trim() || !autor.apellidoPaterno.trim() || !autor.apellidoMaterno.trim() || !autor.correo.trim()) {
+        if(!autorFormulario.nombre.trim() || !autorFormulario.apellidoPaterno.trim() || !autorFormulario.apellidoMaterno.trim() || !autorFormulario.correo.trim()) {
             setMensaje('Por favor, completa todos los campos')
             setTimeout(() => {
                 setMensaje('')
@@ -53,7 +50,7 @@ function Autores() {
         }
 
         //Validar que el correo tenga un formato correcto
-        if(!validarEmail(autor.correo)) {
+        if(!validarEmail(autorFormulario.correo)) {
             setMensaje('Por favor, ingresa un correo electrónico válido')
             setTimeout(() => {
                 setMensaje('')
@@ -63,10 +60,10 @@ function Autores() {
 
         // Si la validación es exitosa entonces guardas el autor, reseteas el formulario y muestras un mensaje de éxito.
         try {
-            if (autor.id) {
-                await actualizarAutor(autor.id, autor)
+            if (autorFormulario.id) {
+                await actualizarAutor(autorFormulario.id, autorFormulario)
             } else { 
-                await registrarAutor(autor)
+                await registrarAutor(autorFormulario)
             }
             handleCancelarFormulario()
             setMensaje('Autor guardado exitosamente')
@@ -84,10 +81,13 @@ function Autores() {
 
     const handleEditarAutor = (autor) => {
         setMostrarFormulario(true)
-        setAutor(autor)
+        setAutorFormulario(autor)
     }
 
     const handleEliminarAutor = async (id) => {
+        const confirmar = window.confirm('¿Estás seguro de que quieres eliminar este autor?')
+        if (!confirmar) return
+        
         try {
             await eliminarAutor(id)
             setMensaje('Autor eliminado exitosamente')
@@ -107,38 +107,22 @@ function Autores() {
         <>
             <button onClick={() => setMostrarFormulario(true)}>Nuevo Autor</button>
             {mostrarFormulario && (
-                <form onSubmit={handleSubmitAutor}>
-                    <label>
-                        Nombre(s):
-                        <input type="text" name="nombre" value={autor.nombre} onChange={handleChangeAutor} />
-                    </label>
-                    <label>
-                        Apellido Paterno:
-                        <input type="text" name="apellidoPaterno" value={autor.apellidoPaterno} onChange={handleChangeAutor} />
-                    </label>
-                    <label>
-                        Apellido Materno:
-                        <input type="text" name="apellidoMaterno" value={autor.apellidoMaterno} onChange={handleChangeAutor} />
-                    </label>
-                    <label>
-                        Correo Electrónico:
-                        <input type="email" name="correo" value={autor.correo} onChange={handleChangeAutor} required />
-                    </label>
-                    <button type="submit">Guardar</button>
-                    <button type="button" onClick={handleCancelarFormulario}>Cancelar</button>
-                </form>
+                <FormularioAutor 
+                    autor={autorFormulario}
+                    onChangeAutor={handleChangeAutor}
+                    onSubmit={handleSubmitAutor}
+                    onCancelar={handleCancelarFormulario}
+                />
             )}
             {mensaje && (
                 <p>{mensaje}</p>
             )}
             {autores.length > 0 ? (
-                autores.map(autor => (
-                    <div key={autor.id}>
-                        <TarjetaAutor autor={autor} />
-                        <button onClick={() => handleEditarAutor(autor)}>Editar</button>
-                        <button onClick={() => handleEliminarAutor(autor.id)}>Eliminar</button>
-                    </div>
-                ))
+                <ListaAutores 
+                    autores={autores}
+                    onEditar={handleEditarAutor}
+                    onEliminar={handleEliminarAutor}
+                />
             ): (
                 <p>No hay autores registrados</p>
             )}
