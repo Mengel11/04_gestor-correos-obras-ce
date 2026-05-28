@@ -1,7 +1,8 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import Layout from './components/Layout'
 import Obras from './pages/Obras'
 import Autores from './pages/Autores'
-import Layout from './components/Layout'
+import Revisores from './pages/Revisores'
 
 function App() {
   return (
@@ -10,6 +11,7 @@ function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<Obras />} />
           <Route path="/autores" element={<Autores />} />
+          <Route path="/revisores" element={<Revisores />} />
         </Route>
       </Routes>
     </BrowserRouter>

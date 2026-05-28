@@ -20,9 +20,7 @@ function Autores() {
             setAutores(autoresObtenidos)
         } catch (error) {
             setMensaje('No se pudieron cargar los autores, intentelo nuevamente')
-            setTimeout(() => {
-                setMensaje('')
-            }, 2000)
+            setTimeout(() => { setMensaje('') }, 2000)
         }
     }
 
@@ -44,18 +42,14 @@ function Autores() {
         // Validar que los campos no estén vacíos
         if(!autorFormulario.nombre.trim() || !autorFormulario.apellidoPaterno.trim() || !autorFormulario.apellidoMaterno.trim() || !autorFormulario.correo.trim()) {
             setMensaje('Por favor, completa todos los campos')
-            setTimeout(() => {
-                setMensaje('')
-            }, 2000)
+            setTimeout(() => { setMensaje('') }, 2000)
             return
         }
 
         //Validar que el correo tenga un formato correcto
         if(!validarEmail(autorFormulario.correo)) {
             setMensaje('Por favor, ingresa un correo electrónico válido')
-            setTimeout(() => {
-                setMensaje('')
-            }, 2000)
+            setTimeout(() => { setMensaje('') }, 2000)
             return
         }
 
@@ -68,16 +62,11 @@ function Autores() {
             }
             handleCancelarFormulario()
             setMensaje('Autor guardado exitosamente')
-            setTimeout(() => {
-                setMensaje('')
-            }, 2000)
+            setTimeout(() => { setMensaje('') }, 2000)
             cargarAutores()
         } catch (error) {
             setMensaje('Error al guardar el autor')
-            setTimeout(() => {
-                setMensaje('')
-            }, 2000)
-        }
+            setTimeout(() => { setMensaje('') }, 2000) }
     }
 
     const handleEditarAutor = (autor) => {
