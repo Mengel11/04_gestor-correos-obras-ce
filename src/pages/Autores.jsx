@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useConfirmar } from '../context/Confirmar'
 import { registrarAutor, obtenerAutores, eliminarAutor, actualizarAutor } from '../services/autoresService'
 import { validarEmail } from '../utils/validaciones'
 import FormularioAutor from '../components/FormularioAutor'
@@ -10,7 +11,9 @@ function Autores() {
     const [autorFormulario, setAutorFormulario] = useState({nombre:'', apellidoPaterno:'', apellidoMaterno:'', correo:''})
     const [mensaje, setMensaje] = useState('')
     const [autores, setAutores] = useState([])
-    
+
+    const confirmarAccion = useConfirmar()
+
     const cargarAutores = async () => {
         try {
             const autoresObtenidos = await obtenerAutores()
@@ -23,9 +26,7 @@ function Autores() {
         }
     }
 
-    useEffect(() => {
-        cargarAutores()
-    }, [])
+    useEffect(() => { cargarAutores() }, [])
     
     const handleChangeAutor = (e) => {
         const { name, value } = e.target
@@ -37,7 +38,7 @@ function Autores() {
         setAutorFormulario({nombre:'', apellidoPaterno:'', apellidoMaterno:'', correo:''})
     }
     
-    const handleSubmitAutor = async (e) => {
+    const handleSubmitFormulario = async (e) => {
         e.preventDefault()
 
         // Validar que los campos no estén vacíos
@@ -85,23 +86,20 @@ function Autores() {
     }
 
     const handleEliminarAutor = async (id) => {
-        const confirmar = window.confirm('¿Estás seguro de que quieres eliminar este autor?')
+        const confirmar = await confirmarAccion('¿Estás seguro de que deseas eliminar este autor?')
         if (!confirmar) return
         
         try {
             await eliminarAutor(id)
             setMensaje('Autor eliminado exitosamente')
-            setTimeout(() => {
-                setMensaje('')
-            }, 2000)
+            setTimeout(() => { setMensaje('') }, 2000)
             cargarAutores()
         } catch (error) {
             setMensaje('Error al eliminar el autor, intente nuevamente')
-            setTimeout(() => {
-                setMensaje('')
-            }, 2000)
+            setTimeout(() => { setMensaje('') }, 2000)
         }
     }
+    
 
     return (
         <>
@@ -110,7 +108,7 @@ function Autores() {
                 <FormularioAutor 
                     autor={autorFormulario}
                     onChangeAutor={handleChangeAutor}
-                    onSubmit={handleSubmitAutor}
+                    onSubmit={handleSubmitFormulario}
                     onCancelar={handleCancelarFormulario}
                 />
             )}
