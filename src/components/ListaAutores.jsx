@@ -1,13 +1,18 @@
 import TarjetaAutor from './TarjetaAutor'
 
-function ListaAutores({ autores, onEditar, onEliminar }) {
+function ListaAutores({ autores, botones }) {
   return (
     <>
       {autores.map(autor => (
         <div key={autor.id}>
           <TarjetaAutor autor={autor} />
-          <button onClick={() => onEditar(autor)}>Editar</button>
-          <button onClick={() => onEliminar(autor.id)}>Eliminar</button>
+          {botones.map((boton, index) => {
+            const etiqueta = typeof boton.texto === 'function' ? boton.texto(autor) : boton.texto;
+            return (
+              <button key={index} onClick={() => boton.onClick(autor)} type="button">
+                {etiqueta}
+              </button>
+          )})}
         </div>
       ))}
     </>

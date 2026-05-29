@@ -74,12 +74,12 @@ function Autores() {
         setAutorFormulario(autor)
     }
 
-    const handleEliminarAutor = async (id) => {
+    const handleEliminarAutor = async (autor) => {
         const confirmar = await confirmarAccion('¿Estás seguro de que deseas eliminar este autor?')
         if (!confirmar) return
         
         try {
-            await eliminarAutor(id)
+            await eliminarAutor(autor.id)
             setMensaje('Autor eliminado exitosamente')
             setTimeout(() => { setMensaje('') }, 2000)
             cargarAutores()
@@ -107,8 +107,10 @@ function Autores() {
             {autores.length > 0 ? (
                 <ListaAutores 
                     autores={autores}
-                    onEditar={handleEditarAutor}
-                    onEliminar={handleEliminarAutor}
+                    botones={[
+                        { texto: 'Editar', onClick: handleEditarAutor },
+                        { texto: 'Eliminar', onClick: handleEliminarAutor }
+                    ]}
                 />
             ): (
                 <p>No hay autores registrados</p>
