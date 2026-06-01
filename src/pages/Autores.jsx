@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useConfirmar } from '../context/Confirmar'
+import { useRetroalimentacion } from '../context/Retroalimentacion'
 import { registrarAutor, obtenerAutores, eliminarAutor, actualizarAutor } from '../services/autoresService'
 import { validarEmail } from '../utils/validaciones'
 import FormularioAutor from '../components/FormularioAutor'
@@ -9,18 +10,17 @@ import ListaAutores from '../components/ListaAutores'
 function Autores() {
     const [mostrarFormulario, setMostrarFormulario] = useState(false)
     const [autorFormulario, setAutorFormulario] = useState({nombre:'', apellidoPaterno:'', apellidoMaterno:'', correo:''})
-    const [mensaje, setMensaje] = useState('')
     const [autores, setAutores] = useState([])
 
     const confirmarAccion = useConfirmar()
+    const mostrarMensaje = useRetroalimentacion()
 
     const cargarAutores = async () => {
         try {
             const autoresObtenidos = await obtenerAutores()
             setAutores(autoresObtenidos)
         } catch (error) {
-            setMensaje('No se pudieron cargar los autores, intentelo nuevamente')
-            setTimeout(() => { setMensaje('') }, 2000)
+            mostrarMensaje({tipo: 'Error', texto: 'No se pudieron cargar los autores, intentelo nuevamente'})
         }
     }
 
@@ -41,15 +41,13 @@ function Autores() {
 
         // Validar que los campos no estén vacíos
         if(!autorFormulario.nombre.trim() || !autorFormulario.apellidoPaterno.trim() || !autorFormulario.apellidoMaterno.trim() || !autorFormulario.correo.trim()) {
-            setMensaje('Por favor, completa todos los campos')
-            setTimeout(() => { setMensaje('') }, 2000)
+            mostrarMensaje({tipo: 'Informar', texto: 'Por favor, completa todos los campos'})
             return
         }
 
         //Validar que el correo tenga un formato correcto
         if(!validarEmail(autorFormulario.correo)) {
-            setMensaje('Por favor, ingresa un correo electrónico válido')
-            setTimeout(() => { setMensaje('') }, 2000)
+            mostrarMensaje({tipo: 'Informar', texto: 'Por favor, ingresa un correo electrónico válido'})
             return
         }
 
@@ -61,12 +59,11 @@ function Autores() {
                 await registrarAutor(autorFormulario)
             }
             handleCancelarFormulario()
-            setMensaje('Autor guardado exitosamente')
-            setTimeout(() => { setMensaje('') }, 2000)
+            mostrarMensaje({tipo: 'Éxito', texto: 'Autor guardado exitosamente'})
             cargarAutores()
         } catch (error) {
-            setMensaje('Error al guardar el autor')
-            setTimeout(() => { setMensaje('') }, 2000) }
+            mostrarMensaje({tipo: 'Error', texto: 'Error al guardar el autor, intente nuevamente'})
+        }
     }
 
     const handleEditarAutor = (autor) => {
@@ -80,12 +77,10 @@ function Autores() {
         
         try {
             await eliminarAutor(autor.id)
-            setMensaje('Autor eliminado exitosamente')
-            setTimeout(() => { setMensaje('') }, 2000)
+            mostrarMensaje({tipo: 'Éxito', texto: 'Autor eliminado exitosamente'})
             cargarAutores()
         } catch (error) {
-            setMensaje('Error al eliminar el autor, intente nuevamente')
-            setTimeout(() => { setMensaje('') }, 2000)
+            mostrarMensaje({tipo: 'Error', texto: 'Error al eliminar el autor, intente nuevamente'})
         }
     }
     
@@ -100,9 +95,6 @@ function Autores() {
                     onSubmit={handleSubmitFormulario}
                     onCancelar={handleCancelarFormulario}
                 />
-            )}
-            {mensaje && (
-                <p>{mensaje}</p>
             )}
             {autores.length > 0 ? (
                 <ListaAutores 

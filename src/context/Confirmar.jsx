@@ -26,7 +26,7 @@ function ConfirmarProvider({ children }) {
     }
 
     return (
-        <ConfirmarContext value={confirmarAccion}>
+        <ConfirmarContext.Provider value={confirmarAccion}>
             {children}
             {confirmarEstado.mostrar && (
                 <div>
@@ -37,7 +37,7 @@ function ConfirmarProvider({ children }) {
                     </div>
                 </div>
             )}
-        </ConfirmarContext>
+        </ConfirmarContext.Provider>
     )
 }
 
