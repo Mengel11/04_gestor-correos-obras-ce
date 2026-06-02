@@ -3,6 +3,7 @@ import Layout from './components/Layout'
 import Obras from './pages/Obras'
 import Autores from './pages/Autores'
 import Revisores from './pages/Revisores'
+import DetallesObra from './pages/DetallesObra'
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
           <Route index element={<Obras />} />
           <Route path="/autores" element={<Autores />} />
           <Route path="/revisores" element={<Revisores />} />
+          <Route path="/obras/:id" element={<DetallesObra />} />
         </Route>
       </Routes>
     </BrowserRouter>

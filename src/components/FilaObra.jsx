@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 function calcularPorcentajeAvance(estado) {
     let valor = null
     switch (estado) {
@@ -30,12 +32,16 @@ function calcularPorcentajeAvance(estado) {
     return porcentaje
 }
 
-function FilaObra({ obra }){
+function FilaObra({ obra, onEditar, onEliminar }) {
     return (
         <tr>
-            <td>{obra.titulo}</td>
+            <td>
+                <Link to={`/obras/${obra.id}`}>{obra.titulo}</Link>
+                <button onClick={() => onEditar(obra)}>Editar</button>
+                <button onClick={() => onEliminar(obra)}>Eliminar</button>
+            </td>
             <td>{obra.estado}</td>
-            <td>{obra.fechaAlta?.toDate?.()?.toLocaleString()}</td>
+            <td>{obra.fechaAlta.toDate().toLocaleString('es-MX')}</td>
             <td>{obra.autores.length}</td>
             <td>{obra.revisoresAsignados.length}</td>
             <td>{calcularPorcentajeAvance(obra.estado)}%</td>

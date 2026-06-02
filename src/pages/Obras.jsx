@@ -88,7 +88,11 @@ function Obras() {
         />
       )}
       {obras.length > 0 ? (
-        <TablaObras obras={obras} />
+        <TablaObras 
+          obras={obras} 
+          onEditar={handleEditarObra}
+          onEliminar={handleEliminarObra}
+        />
       ) : (
         <p>Aun no hay obras registradas</p>
       )}

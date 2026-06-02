@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { obtenerAutores } from '../services/autoresService'
 import ListaAutores from './ListaAutores'
 
@@ -51,12 +52,15 @@ function FormularioObra({ obra, onChangeObra, onSubmit, onCancelar }) {
             {mostrarAutoresDisponibles ? 'Ocultar Autores' : 'Seleccionar Autores'}
           </button>
           {mostrarAutoresDisponibles && (
-            <ListaAutores 
-                autores={autoresDisponibles}
-                botones={[
-                    { texto: (autor) => (obra.autores.includes(autor.id) ? 'Quitar' : 'Añadir'), onClick: handleClickAutor }
-                ]} 
-            />
+            <>
+              <ListaAutores 
+                  autores={autoresDisponibles}
+                  botones={[
+                      { texto: (autor) => (obra.autores.includes(autor.id) ? 'Quitar' : 'Añadir'), onClick: handleClickAutor }
+                  ]} 
+              />
+              <Link to="/autores">Nuevo Autor</Link>
+            </>
           )}
           <button type="submit">Guardar</button>
           <button type="button" onClick={onCancelar}>Cancelar</button>

@@ -1,11 +1,17 @@
 import FilaObra from './FilaObra'
 
-function TablaObras({ obras }) {
-    const filasObra = obras.map(obra => <FilaObra key={obra.id} obra={obra} />)
+function TablaObras({ obras, onEditar, onEliminar }) {
+    const filasObra = obras.map(obra => (
+        <FilaObra 
+            key={obra.id} 
+            obra={obra} 
+            onEditar={onEditar} 
+            onEliminar={onEliminar} 
+        />
+    ))
     
     return (
         <>
-            <h2>Tabla de obras que muestra una barra con el pordentaje de avance</h2>
             <table>
                 <thead>
                     <tr>
