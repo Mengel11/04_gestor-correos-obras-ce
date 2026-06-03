@@ -1,6 +1,6 @@
 import { 
     collection, 
-    addDoc, getDocs, deleteDoc, doc, updateDoc, 
+    addDoc, getDocs, deleteDoc, doc, updateDoc, getDoc,
     serverTimestamp 
 } from "firebase/firestore";
 import { db } from '../firebaseConfig';
@@ -34,4 +34,10 @@ export const eliminarObra = async (id) => {
 export const actualizarObra = async (id, obraActualizada) => {
     const obraRef = doc(db, "obras", id);
     await updateDoc(obraRef, obraActualizada);
+}
+
+export const obtenerObra = async (id) => {
+    const obraDoc = await getDoc(doc(db, "obras", id));
+    const obra = { id: obraDoc.id, ...obraDoc.data() };
+    return obra;
 }

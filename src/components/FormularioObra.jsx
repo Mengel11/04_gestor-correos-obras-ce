@@ -1,20 +1,21 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { useRetroalimentacion } from '../context/Retroalimentacion'
 import { obtenerAutores } from '../services/autoresService'
 import ListaAutores from './ListaAutores'
 
 function FormularioObra({ obra, onChangeObra, onSubmit, onCancelar }) {
     const [mostrarAutoresDisponibles, setMostrarAutoresDisponibles] = useState(false)
     const [autoresDisponibles, setAutoresDisponibles] = useState([])
-    const [mensaje, setMensaje] = useState('')
+
+    const mostrarMEnsaje = useRetroalimentacion();
 
     const cargarAutores = async () => {
         try {
             const autoresObtenidos = await obtenerAutores()
             setAutoresDisponibles(autoresObtenidos)
         } catch (error) {
-            setMensaje('No se pudieron cargar los autores, intentelo nuevamente')
-            setTimeout(() => { setMensaje('') }, 2000)
+            mostrarMensaje({tipo: 'Error', texto: 'No se pudieron cargar los autores, intentelo nuevamente'})
         }
     }
 
