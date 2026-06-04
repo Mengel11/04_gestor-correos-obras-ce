@@ -40,13 +40,13 @@ function FormularioObra({ obra, onChangeObra, onSubmit, onCancelar }) {
             Clasificación:
             <select name="clasificacion" value={obra.clasificacion} onChange={onChangeObra}>
               <option value="" disabled hidden>Selecciona una opción</option>
-              <option value="libro de texto">Libro de texto</option>
-              <option value="libro cientifico">Libro científico</option>
-              <option value="notas de curso normal">Notas de curso normal</option>
-              <option value="notas de curso especial">Notas de curso especial</option>
-              <option value="paquete de computo de docencia">Paquete de computo de docencia</option>
-              <option value="paquete de computo cientifico">Paquete de cómputo científico</option>
-              <option value="libro de divulgacion">Libro de divulgación</option>
+              <option value="Libro de texto">Libro de texto</option>
+              <option value="Libro cientifico">Libro científico</option>
+              <option value="Notas de curso normal">Notas de curso normal</option>
+              <option value="Notas de curso especial">Notas de curso especial</option>
+              <option value="Paquete de computo de docencia">Paquete de computo de docencia</option>
+              <option value="Paquete de computo cientifico">Paquete de cómputo científico</option>
+              <option value="Libro de divulgacion">Libro de divulgación</option>
             </select>
           </label>
           <button type="button" onClick={() => setMostrarAutoresDisponibles(!mostrarAutoresDisponibles)}>

@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { useRetroalimentacion } from '../context/Retroalimentacion'
 import { useParams } from 'react-router-dom';
 import { obtenerObra } from '../services/obrasService';
+import TarjetaObra from '../components/TarjetaObra';
+import VerificacionObra from '../components/VerificacionObra';
 
 function DetallesObra() {
     const [obra, setObra] = useState(null);
@@ -32,8 +34,8 @@ function DetallesObra() {
         <>  
             {obra && (
                 <>
-                    <h2>{obra.titulo}</h2>
-                    <p>{obra.clasificacion}</p>
+                    <TarjetaObra obra={obra} />
+                    <VerificacionObra obra={obra} />
                 </>
             )}
             {cargando && (
