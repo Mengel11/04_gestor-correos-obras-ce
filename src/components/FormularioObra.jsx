@@ -2,12 +2,12 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useRetroalimentacion } from '../context/Retroalimentacion'
 import { useConfirmar } from '../context/Confirmar'
-import { registrarObra, obtenerObras, eliminarObra, actualizarObra } from '../services/obrasService'
+import { registrarObra, actualizarObra } from '../services/obrasService'
 import { obtenerAutores } from '../services/autoresService'
 import ListaAutores from './ListaAutores'
 
-function FormularioObra({ obraEditar, ocultarFormulario, onExito }) {
-    const [obraFormulario, setObraFormulario] = useState(obraEditar || { titulo: '', clasificacion: '', autores: [] })
+function FormularioObra({ obraAEditar, ocultarFormulario, onExito }) {
+    const [obraFormulario, setObraFormulario] = useState(obraAEditar)
     const [mostrarAutoresDisponibles, setMostrarAutoresDisponibles] = useState(false)
     const [autoresDisponibles, setAutoresDisponibles] = useState([])
 
@@ -60,7 +60,7 @@ function FormularioObra({ obraEditar, ocultarFormulario, onExito }) {
         } else {
           await registrarObra(obraFormulario)
         }
-        await onExito()
+        onExito()
         handleCancelarFormulario()
         mostrarMensaje({tipo: 'Exito', texto: 'Obra guardada exitosamente'})
       } catch (error) {

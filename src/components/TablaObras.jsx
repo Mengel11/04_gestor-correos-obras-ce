@@ -1,12 +1,33 @@
+import { useConfirmar } from '../context/Confirmar';
+import { useRetroalimentacion } from '../context/Retroalimentacion';
+import { eliminarObra } from '../services/obrasService';
 import FilaObra from './FilaObra'
 
-function TablaObras({ obras, onEditar, onEliminar }) {
+function TablaObras({ obras, handleMostrarFormulario }) {
+    const confirmarAccion = useConfirmar();
+    const mostrarMensaje = useRetroalimentacion();
+
+    const handleEliminarObra = async (obra) => {
+        const confirmar = await confirmarAccion('¿Estás seguro que deseas eliminar esta obra?')
+        if (!confirmar) return
+    
+        try {
+          await eliminarObra(obra.id)
+          mostrarMensaje({tipo: 'Exito', texto: 'Obra eliminada exitosamente'})
+          await onExito()
+        } catch (error) {
+          mostrarMensaje({tipo: 'Error', texto: 'Error al eliminar la obra, intente nuevamente'})
+        }
+    }
+
     const filasObra = obras.map(obra => (
         <FilaObra 
-            key={obra.id} 
-            obra={obra} 
-            onEditar={onEditar} 
-            onEliminar={onEliminar} 
+            key={obra.id}
+            obra={obra}
+            botones={[
+                {texto: 'Editar', onClick: handleMostrarFormulario},
+                {texto: 'Eliminar', onClick: handleEliminarObra}
+            ]}
         />
     ))
     

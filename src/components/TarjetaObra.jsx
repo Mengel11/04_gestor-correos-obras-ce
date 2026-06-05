@@ -5,8 +5,10 @@ import { obtenerAutor } from '../services/autoresService';
 import { calcularPorcentajeAvance } from '../utils/obraUtils';
 import TarjetaAutor from './TarjetaAutor';
 import GraficaDona from './GraficaDona';
+import FormularioObra from './FormularioObra';
 
 function TarjetaObra({ obra }) {
+    const [mostrarFormulario, setMostrarFormulario] = useState(false)
     const [autoresObra, setAutoresObra] = useState([]);
 
     const mostrarMensaje = useRetroalimentacion();
@@ -37,7 +39,14 @@ function TarjetaObra({ obra }) {
             </div>
             <p>Estado: {obra.estado}</p>
             <GraficaDona porcentaje={calcularPorcentajeAvance(obra.estado)}/>
-            <Link to="/">Modificar</Link>
+            <button onClick={() => setMostrarFormulario(true)}>Modificar</button>
+            {mostrarFormulario && (
+                <FormularioObra 
+                    obraAEditar={obra}
+                    ocultarFormulario={() => setMostrarFormulario(false)}
+                    onExito={() => {}}
+                />
+            )}
         </>
     )
 }

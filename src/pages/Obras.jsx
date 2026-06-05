@@ -1,16 +1,14 @@
 import { useState, useEffect } from 'react'
 import { useRetroalimentacion } from '../context/Retroalimentacion'
 import { useConfirmar } from '../context/Confirmar'
-import { registrarObra, obtenerObras, eliminarObra, actualizarObra } from '../services/obrasService'
+import { obtenerObras } from '../services/obrasService'
 import FormularioObra from '../components/FormularioObra'
 import TablaObras from '../components/TablaObras'
 
 function Obras() {
   const [mostrarFormulario, setMostrarFormulario] = useState(false)
+  const [obraAEditar, setObraAEditar] = useState(null)
   const [obras, setObras] = useState([])
-  
-  const mostrarMensaje = useRetroalimentacion()
-  const confirmarAccion = useConfirmar()
 
   const cargarObras = async () => {
     try {
@@ -23,38 +21,25 @@ function Obras() {
 
   useEffect(() => { cargarObras() }, [])
 
-  const handleEditarObra = (obra) => {
-    setObraFormulario(obra)
+  const handleMostrarFormulario = (obra = { titulo: '', clasificacion: '', autores: [] }) => {
     setMostrarFormulario(true)
-  }
-
-  const handleEliminarObra = async (obra) => {
-    const confirmar = await confirmarAccion('¿Estás seguro que deseas eliminar esta obra?')
-    if (!confirmar) return
-
-    try {
-      await eliminarObra(obra.id)
-      mostrarMensaje({tipo: 'Exito', texto: 'Obra eliminada exitosamente'})
-      await cargarObras()
-    } catch (error) {
-      mostrarMensaje({tipo: 'Error', texto: 'Error al eliminar la obra, intente nuevamente'})
-    }
+    setObraAEditar(obra)
   }
 
   return (
     <>
-      <button onClick={() => setMostrarFormulario(true)}>Nueva Obra</button>
+      <button onClick={() => handleMostrarFormulario()}>Nueva Obra</button>
       {mostrarFormulario && (
         <FormularioObra 
+          obraAEditar={obraAEditar}
           ocultarFormulario={() => setMostrarFormulario(false)}
           onExito={cargarObras}
         />
       )}
       {obras.length > 0 ? (
         <TablaObras 
-          obras={obras} 
-          onEditar={handleEditarObra}
-          onEliminar={handleEliminarObra}
+          obras={obras}
+          handleMostrarFormulario={handleMostrarFormulario}
         />
       ) : (
         <p>Aun no hay obras registradas</p>
