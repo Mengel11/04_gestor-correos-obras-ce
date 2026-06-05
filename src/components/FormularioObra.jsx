@@ -1,14 +1,18 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useRetroalimentacion } from '../context/Retroalimentacion'
+import { useConfirmar } from '../context/Confirmar'
+import { registrarObra, obtenerObras, eliminarObra, actualizarObra } from '../services/obrasService'
 import { obtenerAutores } from '../services/autoresService'
 import ListaAutores from './ListaAutores'
 
-function FormularioObra({ obra, onChangeObra, onSubmit, onCancelar }) {
+function FormularioObra({ obraEditar, ocultarFormulario, onExito }) {
+    const [obraFormulario, setObraFormulario] = useState(obraEditar || { titulo: '', clasificacion: '', autores: [] })
     const [mostrarAutoresDisponibles, setMostrarAutoresDisponibles] = useState(false)
     const [autoresDisponibles, setAutoresDisponibles] = useState([])
 
-    const mostrarMEnsaje = useRetroalimentacion();
+    const mostrarMensaje = useRetroalimentacion()
+    const confirmarAccion = useConfirmar()
 
     const cargarAutores = async () => {
         try {
@@ -21,24 +25,58 @@ function FormularioObra({ obra, onChangeObra, onSubmit, onCancelar }) {
 
     useEffect(() => { cargarAutores() }, [])
 
+    const handleChangeObra = (e) => {
+      const { name, value } = e.target
+      setObraFormulario({...obraFormulario, [name]: value})
+    }
+
     const handleClickAutor = (autor) => {
         // Si el autor ya esta en la lista de autores de la obra entonces lo eliminas, si no esta entonces lo añades
-        const nuevosAutores = obra.autores.includes(autor.id)
-            ? obra.autores.filter(autorId => autorId !== autor.id)
-            : [...obra.autores, autor.id]
+        const nuevosAutores = obraFormulario.autores.includes(autor.id)
+            ? obraFormulario.autores.filter(autorId => autorId !== autor.id)
+            : [...obraFormulario.autores, autor.id]
 
-        onChangeObra({target: { name: 'autores', value: nuevosAutores }})
+        handleChangeObra({target: { name: 'autores', value: nuevosAutores }})
     }    
 
+    const handleCancelarFormulario = () => {
+      ocultarFormulario()
+      setObraFormulario({titulo: '', clasificacion: '', autores: []})
+    }
+
+    const handleSubmitFormulario = async (e) => {
+      e.preventDefault()
+
+      // Validar que los campos no estén vacíos
+      if(!obraFormulario.titulo.trim() || !obraFormulario.clasificacion || obraFormulario.autores.length === 0) {
+        mostrarMensaje({tipo: 'Error', texto: 'Por favor, completa todos los campos'})
+        return
+      }
+
+      // Si la validación es exitosa entonces guardas la obra, reseteas el formulario y muestras un mensaje de éxito.
+      try {
+        if (obraFormulario.id) {
+          await actualizarObra(obraFormulario.id, obraFormulario)
+        } else {
+          await registrarObra(obraFormulario)
+        }
+        await onExito()
+        handleCancelarFormulario()
+        mostrarMensaje({tipo: 'Exito', texto: 'Obra guardada exitosamente'})
+      } catch (error) {
+        mostrarMensaje({tipo: 'Error', texto: 'Error al guardar la obra'})
+      }
+    }
+
     return (
-        <form onSubmit={onSubmit}>
+        <form onSubmit={handleSubmitFormulario}>
           <label>
             Titulo:
-            <input type="text" name="titulo" value={obra.titulo} onChange={onChangeObra}/>
+            <input type="text" name="titulo" value={obraFormulario.titulo} onChange={handleChangeObra}/>
           </label>
           <label>
             Clasificación:
-            <select name="clasificacion" value={obra.clasificacion} onChange={onChangeObra}>
+            <select name="clasificacion" value={obraFormulario.clasificacion} onChange={handleChangeObra}>
               <option value="" disabled hidden>Selecciona una opción</option>
               <option value="Libro de texto">Libro de texto</option>
               <option value="Libro cientifico">Libro científico</option>
@@ -57,14 +95,14 @@ function FormularioObra({ obra, onChangeObra, onSubmit, onCancelar }) {
               <ListaAutores 
                   autores={autoresDisponibles}
                   botones={[
-                      { texto: (autor) => (obra.autores.includes(autor.id) ? 'Quitar' : 'Añadir'), onClick: handleClickAutor }
+                      { texto: (autor) => (obraFormulario.autores.includes(autor.id) ? 'Quitar' : 'Añadir'), onClick: handleClickAutor }
                   ]} 
               />
               <Link to="/autores">Nuevo Autor</Link>
             </>
           )}
           <button type="submit">Guardar</button>
-          <button type="button" onClick={onCancelar}>Cancelar</button>
+          <button type="button" onClick={handleCancelarFormulario}>Cancelar</button>
         </form>
     )
 }
