@@ -4,6 +4,11 @@ import { useParams } from 'react-router-dom';
 import { obtenerObra } from '../services/obrasService';
 import TarjetaObra from '../components/TarjetaObra';
 import VerificacionObra from '../components/VerificacionObra';
+import RevisoresPlazos from '../components/RevisoresPlazos';
+import AsignarRevisores from '../components/AsignarRevisores';
+import RevisionesPlazos from '../components/RevisionesPlazos'
+import Revision from '../components/Revision'
+import DecisionFinal from '../components/DecisionFinal'
 
 function DetallesObra() {
     const [obra, setObra] = useState(null);
@@ -36,6 +41,11 @@ function DetallesObra() {
                 <>
                     <TarjetaObra obra={obra} />
                     <VerificacionObra obra={obra} />
+                    <RevisoresPlazos obra={obra}/>
+                    <AsignarRevisores obra={obra} />
+                    <RevisionesPlazos obra={obra} />
+                    <Revision obra={obra} />
+                    <DecisionFinal obra={obra} />
                 </>
             )}
             {cargando && (

@@ -4,6 +4,7 @@ import { useRetroalimentacion } from '../context/Retroalimentacion'
 import { obtenerAutor } from '../services/autoresService';
 import { calcularPorcentajeAvance } from '../utils/obraUtils';
 import TarjetaAutor from './TarjetaAutor';
+import GraficaDona from './GraficaDona';
 
 function TarjetaObra({ obra }) {
     const [autoresObra, setAutoresObra] = useState([]);
@@ -35,7 +36,7 @@ function TarjetaObra({ obra }) {
                 </div>
             </div>
             <p>Estado: {obra.estado}</p>
-            <p>Porcentaje de avance: {calcularPorcentajeAvance(obra.estado)}%</p>
+            <GraficaDona porcentaje={calcularPorcentajeAvance(obra.estado)}/>
             <Link to="/">Modificar</Link>
         </>
     )
