@@ -7,8 +7,7 @@ import TarjetaAutor from './TarjetaAutor';
 import GraficaDona from './GraficaDona';
 import FormularioObra from './FormularioObra';
 
-function TarjetaObra({ obra }) {
-    const [mostrarFormulario, setMostrarFormulario] = useState(false)
+function TarjetaObra({ obra, onEditar }) {
     const [autoresObra, setAutoresObra] = useState([]);
 
     const mostrarMensaje = useRetroalimentacion();
@@ -20,7 +19,7 @@ function TarjetaObra({ obra }) {
                 const autoresObtenidos = await Promise.all(autores)
                 setAutoresObra(autoresObtenidos)
             } catch (error) {
-                mostrarMensaje({tipo: 'Informar', texto: 'No se pudieron cargar los autores de la obra'})
+                mostrarMensaje({tipo: 'Advertencia', texto: 'No se pudieron cargar los autores de la obra'})
             }
         }
         cargarAutoresObra()
@@ -39,14 +38,7 @@ function TarjetaObra({ obra }) {
             </div>
             <p>Estado: {obra.estado}</p>
             <GraficaDona porcentaje={calcularPorcentajeAvance(obra.estado)}/>
-            <button onClick={() => setMostrarFormulario(true)}>Modificar</button>
-            {mostrarFormulario && (
-                <FormularioObra 
-                    obraAEditar={obra}
-                    ocultarFormulario={() => setMostrarFormulario(false)}
-                    onExito={() => {}}
-                />
-            )}
+            <button onClick={onEditar}>Modificar</button>
         </>
     )
 }

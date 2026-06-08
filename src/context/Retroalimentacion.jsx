@@ -12,13 +12,13 @@ function RetroalimentacionProvider({ children }) {
 
     return (
         <RetroalimentacionContext.Provider value={mostrarMensaje}>
-            {children}
             {mensaje && (
                 <div>
                     <h3>{mensaje.tipo}</h3>
                     <p>{mensaje.texto}</p>
                 </div>
             )}
+            {children}
         </RetroalimentacionContext.Provider>
     )
 }

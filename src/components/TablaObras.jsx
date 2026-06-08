@@ -1,11 +1,11 @@
-import { useConfirmar } from '../context/Confirmar';
 import { useRetroalimentacion } from '../context/Retroalimentacion';
+import { useConfirmar } from '../context/Confirmar';
 import { eliminarObra } from '../services/obrasService';
 import FilaObra from './FilaObra'
 
-function TablaObras({ obras, handleMostrarFormulario }) {
-    const confirmarAccion = useConfirmar();
+function TablaObras({ obras, onEditarObra }) {
     const mostrarMensaje = useRetroalimentacion();
+    const confirmarAccion = useConfirmar();
 
     const handleEliminarObra = async (obra) => {
         const confirmar = await confirmarAccion('¿Estás seguro que deseas eliminar esta obra?')
@@ -25,7 +25,7 @@ function TablaObras({ obras, handleMostrarFormulario }) {
             key={obra.id}
             obra={obra}
             botones={[
-                {texto: 'Editar', onClick: handleMostrarFormulario},
+                {texto: 'Editar', onClick: onEditarObra},
                 {texto: 'Eliminar', onClick: handleEliminarObra}
             ]}
         />

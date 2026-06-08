@@ -1,18 +1,15 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { useRetroalimentacion } from '../context/Retroalimentacion'
-import { useConfirmar } from '../context/Confirmar'
-import { registrarObra, actualizarObra } from '../services/obrasService'
-import { obtenerAutores } from '../services/autoresService'
+import { useRetroalimentacion } from '../context/Retroalimentacion';
+import { obtenerAutores } from '../services/autoresService';
 import ListaAutores from './ListaAutores'
 
-function FormularioObra({ obraAEditar, ocultarFormulario, onExito }) {
+function FormularioObra({ obraAEditar, onGuardar, onCancelar }) {
     const [obraFormulario, setObraFormulario] = useState(obraAEditar)
     const [mostrarAutoresDisponibles, setMostrarAutoresDisponibles] = useState(false)
     const [autoresDisponibles, setAutoresDisponibles] = useState([])
 
     const mostrarMensaje = useRetroalimentacion()
-    const confirmarAccion = useConfirmar()
 
     const cargarAutores = async () => {
         try {
@@ -37,39 +34,10 @@ function FormularioObra({ obraAEditar, ocultarFormulario, onExito }) {
             : [...obraFormulario.autores, autor.id]
 
         handleChangeObra({target: { name: 'autores', value: nuevosAutores }})
-    }    
-
-    const handleCancelarFormulario = () => {
-      ocultarFormulario()
-      setObraFormulario({titulo: '', clasificacion: '', autores: []})
-    }
-
-    const handleSubmitFormulario = async (e) => {
-      e.preventDefault()
-
-      // Validar que los campos no estén vacíos
-      if(!obraFormulario.titulo.trim() || !obraFormulario.clasificacion || obraFormulario.autores.length === 0) {
-        mostrarMensaje({tipo: 'Error', texto: 'Por favor, completa todos los campos'})
-        return
-      }
-
-      // Si la validación es exitosa entonces guardas la obra, reseteas el formulario y muestras un mensaje de éxito.
-      try {
-        if (obraFormulario.id) {
-          await actualizarObra(obraFormulario.id, obraFormulario)
-        } else {
-          await registrarObra(obraFormulario)
-        }
-        onExito()
-        handleCancelarFormulario()
-        mostrarMensaje({tipo: 'Exito', texto: 'Obra guardada exitosamente'})
-      } catch (error) {
-        mostrarMensaje({tipo: 'Error', texto: 'Error al guardar la obra'})
-      }
     }
 
     return (
-        <form onSubmit={handleSubmitFormulario}>
+        <form onSubmit={(e) => onGuardar(e, obraFormulario)}>
           <label>
             Titulo:
             <input type="text" name="titulo" value={obraFormulario.titulo} onChange={handleChangeObra}/>
@@ -102,7 +70,7 @@ function FormularioObra({ obraAEditar, ocultarFormulario, onExito }) {
             </>
           )}
           <button type="submit">Guardar</button>
-          <button type="button" onClick={handleCancelarFormulario}>Cancelar</button>
+          <button type="button" onClick={onCancelar}>Cancelar</button>
         </form>
     )
 }
