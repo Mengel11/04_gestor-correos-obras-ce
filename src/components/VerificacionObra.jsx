@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useRetroalimentacion } from '../context/Retroalimentacion';
 import { actualizarObra } from '../services/obrasService';
+import Botones from './Botones';
 
 function VerificacionObra({ obra, refrescarObra }) {
     const existeRespuesta = obra.clasificacionApta !== null;
@@ -10,7 +11,12 @@ function VerificacionObra({ obra, refrescarObra }) {
 
     const handleClickGuardar = async () => {
         try {
-            await actualizarObra(obra.id, {...obra, clasificacionApta: verificacion})
+            const nuevaObra = {
+                ...obra, 
+                clasificacionApta: verificacion, 
+                estado: verificacion ? 'Establecer revisores y plazos' : 'En espera a reclasificación del autor'
+            }
+            await actualizarObra(obra.id, nuevaObra)
             refrescarObra()
             mostrarMensaje({tipo: 'Exito', texto: 'Clasificación registrada exitosamente'})
             setModoEdicion(false)
@@ -40,16 +46,13 @@ function VerificacionObra({ obra, refrescarObra }) {
                     No
                 </label>
             </fieldset>
-            {!existeRespuesta ? (
-                <button onClick={handleClickGuardar}>Guardar</button>
-            ) : ( modoEdicion ? (
-                <>
-                    <button onClick={handleClickGuardar}>Guardar</button>
-                    <button onClick={handleClickCancelar}>Cancelar</button>
-                </>
-                ) : (
-                <button onClick={() => setModoEdicion(true)}>Editar</button>
-            ))}
+            <Botones
+                modoEdicion={modoEdicion}
+                existeRespuesta={existeRespuesta}
+                onGuardar={handleClickGuardar}
+                onCancelar={handleClickCancelar}
+                onEditar={() => setModoEdicion(true)}
+            />
         </div>
     )
 

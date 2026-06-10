@@ -75,13 +75,13 @@ function DetallesObra() {
             )}
             {obra && (
                 <>
-                    <TarjetaObra obra={obra} onEditar={() => setEditarObra(true)}/>
-                    <VerificacionObra obra={obra} refrescarObra={cargarObra}/>
-                    <RevisoresPlazos obra={obra}/>
-                    <AsignarRevisores obra={obra} />
+                    <TarjetaObra obra={obra} onEditar={() => setEditarObra(true)} />
+                    <VerificacionObra obra={obra} refrescarObra={cargarObra} />
+                    <RevisoresPlazos obra={obra} refrescarObra={cargarObra} />
+                    {/* <AsignarRevisores obra={obra} />
                     <RevisionesPlazos obra={obra} />
                     <Revision obra={obra} />
-                    <DecisionFinal obra={obra} />
+                    <DecisionFinal obra={obra} /> */}
                 </>
             )}
             {cargando && (
