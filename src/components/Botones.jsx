@@ -1,16 +1,17 @@
-function Botones({ existeRespuesta }) {
+function Botones({ existeRespuesta, modoEdicion, onGuardar, onCancelar }) {
 
     return (
         <>
             {!existeRespuesta ? (
-                <button>Guardar</button>
-            ) : (
+                <button onClick={onGuardar}>Guardar</button>
+            ) : ( modoEdicion ? (
                 <>
-                    <button>Editar</button>
-                    <button>Guardar</button>
-                    <button>Cancelar</button>
+                    <button onClick={onGuardar}>Guardar</button>
+                    <button onClick={onCancelar}>Cancelar</button>
                 </>
-            )}
+                ) : (
+                <button onClick={() => setModoEdicion(true)}>Editar</button>
+            ))}
         </>
     )
 }

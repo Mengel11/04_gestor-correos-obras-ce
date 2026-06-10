@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useRetroalimentacion } from '../context/Retroalimentacion'
-import { obtenerObras, registrarObra, actualizarObra } from '../services/obrasService'
+import { useConfirmar } from '../context/Confirmar'
+import { obtenerObras, registrarObra, actualizarObra, eliminarObra } from '../services/obrasService'
 import FormularioObra from '../components/FormularioObra'
 import TablaObras from '../components/TablaObras'
 
@@ -9,6 +10,7 @@ function Obras() {
   const [obraAEditar, setObraAEditar] = useState({ titulo: '', clasificacion: '', autores: [] })
   const [obras, setObras] = useState([])
   const mostrarMensaje = useRetroalimentacion()
+  const confirmarAcción = useConfirmar()
 
   const cargarObras = async () => {
     try {
@@ -55,6 +57,19 @@ function Obras() {
     setMostrarFormulario(true)
   }
 
+  const handleEliminarObra = async (obra) => {
+    const confirmar = await confirmarAccion('¿Estás seguro que deseas eliminar esta obra?')
+    if (!confirmar) return
+
+    try {
+      await eliminarObra(obra.id)
+      mostrarMensaje({tipo: 'Exito', texto: 'Obra eliminada exitosamente'})
+      cargarObras()
+    } catch (error) {
+      mostrarMensaje({tipo: 'Error', texto: 'Error al eliminar la obra, intente nuevamente'})
+    }
+  }
+
   return (
     <>
       <button onClick={() => setMostrarFormulario(true)}>Nueva Obra</button>
@@ -68,7 +83,10 @@ function Obras() {
       {obras.length > 0 ? (
         <TablaObras 
           obras={obras}
-          onEditarObra={handleEditarObra}
+          botones={[
+                {texto: 'Editar', onClick: handleEditarObra},
+                {texto: 'Eliminar', onClick: handleEliminarObra}
+          ]}
         />
       ) : (
         <p>Aun no hay obras registradas</p>

@@ -76,7 +76,7 @@ function DetallesObra() {
             {obra && (
                 <>
                     <TarjetaObra obra={obra} onEditar={() => setEditarObra(true)}/>
-                    <VerificacionObra obra={obra} />
+                    <VerificacionObra obra={obra} refrescarObra={cargarObra}/>
                     <RevisoresPlazos obra={obra}/>
                     <AsignarRevisores obra={obra} />
                     <RevisionesPlazos obra={obra} />
