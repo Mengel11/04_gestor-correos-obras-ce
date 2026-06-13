@@ -21,6 +21,7 @@ function Revisores() {
             setRevisores(revisoresObtenidos)
         } catch (error) {
             mostrarMensaje({tipo: 'Error', texto: 'No se pudieron cargar los revisores, intentelo nuevamente'})
+            console.error(error)
         }
     }
 
@@ -71,12 +72,12 @@ function Revisores() {
         setRevisorFormulario(revisor)
     }
 
-    const handleEliminarRevisor = async (id) => {
+    const handleEliminarRevisor = async (revisor) => {
         const confirmar = await confirmarAccion('¿Estás seguro de que deseas eliminar este revisor?')
         if (!confirmar) return
         
         try {
-            await eliminarRevisor(id)
+            await eliminarRevisor(revisor.id)
             mostrarMensaje({tipo: 'Éxito', texto: 'Revisor eliminado exitosamente'})
             cargarRevisores()
         } catch (error) {
@@ -99,8 +100,10 @@ function Revisores() {
             {revisores.length > 0 ? (
                 <ListaRevisores 
                     revisores={revisores}
-                    onEditar={handleEditarRevisor}
-                    onEliminar={handleEliminarRevisor}
+                    botones={[
+                        { texto: 'Editar', onClick: handleEditarRevisor },
+                        { texto: 'Eliminar', onClick: handleEliminarRevisor }
+                    ]}
                 />
             ): (
                 <p>No hay revisores registrados</p>

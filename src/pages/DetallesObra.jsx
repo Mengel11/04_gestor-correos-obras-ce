@@ -78,8 +78,8 @@ function DetallesObra() {
                     <TarjetaObra obra={obra} onEditar={() => setEditarObra(true)} />
                     <VerificacionObra obra={obra} refrescarObra={cargarObra} />
                     <RevisoresPlazos obra={obra} refrescarObra={cargarObra} />
-                    {/* <AsignarRevisores obra={obra} />
-                    <RevisionesPlazos obra={obra} />
+                    <AsignarRevisores obra={obra} refrescarObra={cargarObra} />
+                    {/* <RevisionesPlazos obra={obra} />
                     <Revision obra={obra} />
                     <DecisionFinal obra={obra} /> */}
                 </>

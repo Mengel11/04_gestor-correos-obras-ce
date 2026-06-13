@@ -1,6 +1,10 @@
 function GraficaDona({ porcentaje }) {
     return (
-        <h3>{porcentaje}%</h3>
+        <>
+        { !Number.isNaN(porcentaje) && (
+           <h3>{porcentaje}%</h3>
+        )}
+        </>
     )
 }
 

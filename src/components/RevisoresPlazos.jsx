@@ -5,11 +5,11 @@ import FormularioRequisitos from "./FormularioRequisitos";
 import Botones from "./Botones";
 
 function RevisoresPlazos({ obra, refrescarObra }){
-    const etiquetas = {numerica: "Número mínimo de revisores", fecha:"Fecha límite"}
+    const [camposFormulario, setCamposFormulario] = useState({revisoresMinimos: obra.revisoresMinimos ?? '', fechaLimiteRevisores: obra.fechaLimiteRevisores?.toDate().toISOString().slice(0,10) ?? ''})
     const camposCompletados = obra.revisoresMinimos !== null && obra.fechaLimiteRevisores !== null
-    const [camposFormulario, setCamposFormulario] = useState({revisoresMinimos: obra.revisoresMinimos ?? '', fechaLimiteRevisores: obra.fechaLimiteRevisores ?? ''})
     const [modoEdicion, setModoEdicion] = useState(obra.estado === 'Establecer revisores y plazos' && !camposCompletados)
     const mostrarMensaje = useRetroalimentacion();
+    const etiquetas = {numerica: "Número mínimo de revisores", fecha:"Fecha límite"}
 
     const handleChangeFormulario = (e) => {
         const { name, value } = e.target
@@ -20,26 +20,21 @@ function RevisoresPlazos({ obra, refrescarObra }){
     }
 
     const handleClickGuardar = async () => {
-        const revisoresRaw = camposFormulario.revisoresMinimos
-        const fechaRaw = camposFormulario.fechaLimiteRevisores
-
-        // Validaciones
-        if (!revisoresRaw.trim() || !fechaRaw.trim()) {
+        // Validar que los campos no esten vacios
+        if (!camposFormulario.revisoresMinimos || !camposFormulario.fechaLimiteRevisores) {
             mostrarMensaje({ tipo: 'Error', texto: 'Por favor completa todos los campos' })
             return
         }
 
-        const revisoresMinimos = Number(revisoresRaw)
+        // Validar que sea un numero entero
+        const revisoresMinimos = Number(camposFormulario.revisoresMinimos)
         if (!Number.isInteger(revisoresMinimos)) {
             mostrarMensaje({ tipo: 'Error', texto: 'El número de revisores debe ser un número entero' })
             return
         }
-
-        const fechaLimiteRevisores = new Date(fechaRaw)
-        if (isNaN(fechaLimiteRevisores.getTime())) {
-            mostrarMensaje({ tipo: 'Error', texto: 'La fecha no es válida' })
-            return
-        }
+        
+        const fechaLimiteRevisores = new Date(camposFormulario.fechaLimiteRevisores)
+    
         try {
             const nuevaObra = {
                 ...obra, 
