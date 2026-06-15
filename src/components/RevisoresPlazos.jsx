@@ -5,11 +5,13 @@ import FormularioRequisitos from "./FormularioRequisitos";
 import Botones from "./Botones";
 
 function RevisoresPlazos({ obra, refrescarObra }){
-    const [camposFormulario, setCamposFormulario] = useState({revisoresMinimos: obra.revisoresMinimos ?? '', fechaLimiteRevisores: obra.fechaLimiteRevisores?.toDate().toISOString().slice(0,10) ?? ''})
+    const [camposFormulario, setCamposFormulario] = useState([
+        {tipo: 'number', nombre: 'revisoresMinimos', etiqueta: "Número mínimo de revisores", valor: obra.revisoresMinimos ?? ''},
+        {tipo: 'date', nombre: 'fechaLimiteRevisores', etiqueta: "Fecha límite", valor: obra.fechaLimiteRevisores?.toDate().toISOString().slice(0,10) ?? ''}
+    ])
     const camposCompletados = obra.revisoresMinimos !== null && obra.fechaLimiteRevisores !== null
     const [modoEdicion, setModoEdicion] = useState(obra.estado === 'Establecer revisores y plazos' && !camposCompletados)
     const mostrarMensaje = useRetroalimentacion();
-    const etiquetas = {numerica: "Número mínimo de revisores", fecha:"Fecha límite"}
 
     const handleChangeFormulario = (e) => {
         const { name, value } = e.target
@@ -60,10 +62,9 @@ function RevisoresPlazos({ obra, refrescarObra }){
     return (
         <>
             <FormularioRequisitos 
-                etiquetas={etiquetas}
-                modoEdicion={modoEdicion}
                 camposFormulario={camposFormulario}
                 onChangeFormulario={handleChangeFormulario}
+                modoEdicion={modoEdicion}
             />
             <Botones 
                 modoEdicion={modoEdicion}

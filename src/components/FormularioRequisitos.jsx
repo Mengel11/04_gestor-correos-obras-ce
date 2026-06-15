@@ -1,16 +1,14 @@
-function FormularioRequisitos({ etiquetas, modoEdicion, camposFormulario, onChangeFormulario }) {
+function FormularioRequisitos({ camposFormulario, onChangeFormulario, modoEdicion }) {
     return (
         <>
             <fieldset>
                 <legend>Formulario</legend>
-                <label>
-                    {etiquetas.numerica}:
-                    <input type="number" name="revisoresMinimos" value={camposFormulario.revisoresMinimos} onChange={onChangeFormulario} disabled={!modoEdicion} />
-                </label>
-                <label>
-                    {etiquetas.fecha}:
-                    <input type="date" lang="es-MX" name="fechaLimiteRevisores" value={camposFormulario.fechaLimiteRevisores} onChange={onChangeFormulario} disabled={!modoEdicion} />
-                </label>
+                {camposFormulario.map((campo) => (
+                    <label key={campo.nombre}>
+                        {campo.etiqueta}:
+                        <input type={campo.tipo} name={campo.nombre} value={campo.valor} onChange={onChangeFormulario} disabled={!modoEdicion} />
+                    </label>
+                ))}
             </fieldset>
         </>
     )

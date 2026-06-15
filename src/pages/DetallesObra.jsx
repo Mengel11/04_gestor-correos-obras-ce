@@ -79,8 +79,8 @@ function DetallesObra() {
                     <VerificacionObra obra={obra} refrescarObra={cargarObra} />
                     <RevisoresPlazos obra={obra} refrescarObra={cargarObra} />
                     <AsignarRevisores obra={obra} refrescarObra={cargarObra} />
-                    {/* <RevisionesPlazos obra={obra} />
-                    <Revision obra={obra} />
+                    {/* <RevisionesPlazos obra={obra} refrescarObra={cargarObra} /> */}
+                    {/* <Revision obra={obra} />
                     <DecisionFinal obra={obra} /> */}
                 </>
             )}
