@@ -80,8 +80,8 @@ function DetallesObra() {
                     <RevisoresPlazos obra={obra} refrescarObra={cargarObra} />
                     <AsignarRevisores obra={obra} refrescarObra={cargarObra} />
                     <RevisionesPlazos obra={obra} refrescarObra={cargarObra} />
-                    {/* <Revision obra={obra} />
-                    <DecisionFinal obra={obra} /> */}
+                    <Revision obra={obra} refrescarObra={cargarObra}/>
+                    {/* <DecisionFinal obra={obra} /> */}
                 </>
             )}
             {cargando && (

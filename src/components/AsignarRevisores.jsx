@@ -13,6 +13,9 @@ function AsignarRevisores({ obra, refrescarObra }) {
     const confirmarAccion = useConfirmar()
     const porcentajeRevisores = Math.round( obra.revisoresAsignados.length / obra.revisoresMinimos * 100 )
 
+    const revisorEstaAsignado = (revisorId) =>
+        obra.revisoresAsignados.some(revisorAsignado => revisorAsignado.id === revisorId)
+
     const cargarRevisores = async () => {
         try {
             const revisoresObtenidos = await obtenerRevisores()
@@ -26,7 +29,7 @@ function AsignarRevisores({ obra, refrescarObra }) {
     useEffect(() => { cargarRevisores() }, [])
 
     const handleClickRevisor = async (revisor) => {
-        const revisorRepetido = obra.revisoresAsignados.includes(revisor.id)
+        const revisorRepetido = revisorEstaAsignado(revisor.id)
         const confirmar = await confirmarAccion(`¿Esta seguro de que desea ${revisorRepetido ? 'quitar' : 'añadir'} a este revisor? 
             Esto enviara un correo a todo el consejo informando que se ha ${revisorRepetido ? 'quitado' : 'añadido'} un revisor a la obra`
         )
@@ -34,8 +37,8 @@ function AsignarRevisores({ obra, refrescarObra }) {
 
         try {
             const revisoresAsignados = revisorRepetido 
-                ? obra.revisoresAsignados.filter(revID => revID !== revisor.id)
-                : [...obra.revisoresAsignados, revisor.id]
+                ? obra.revisoresAsignados.filter(revisorAsignado => revisorAsignado.id !== revisor.id)
+                : [...obra.revisoresAsignados, { id: revisor.id, revisionCompletada: false }]
             await actualizarObra(obra.id, {...obra, revisoresAsignados})
             mostrarMensaje({tipo: 'Exito', texto: `El revisor se ha ${revisorRepetido ? 'quitado' : 'añadido'} correctamente a la obra`, duracion: 5000})
             refrescarObra()
@@ -51,7 +54,7 @@ function AsignarRevisores({ obra, refrescarObra }) {
             <ListaRevisores 
                 revisores={revisores} 
                 botones={[
-                    {texto: (revisor) => obra.revisoresAsignados.includes(revisor.id) ? 'Quitar' : 'Añadir', onClick: handleClickRevisor}
+                    {texto: (revisor) => revisorEstaAsignado(revisor.id) ? 'Quitar' : 'Añadir', onClick: handleClickRevisor}
                 ]}
             />
             <GraficaDona porcentaje={porcentajeRevisores}/>

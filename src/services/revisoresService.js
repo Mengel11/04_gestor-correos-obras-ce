@@ -1,6 +1,6 @@
 import { 
     collection, 
-    addDoc, getDocs, deleteDoc, doc, updateDoc, 
+    addDoc, getDocs, deleteDoc, doc, updateDoc, getDoc,
     serverTimestamp 
 } from "firebase/firestore";
 import { db } from "../firebaseConfig";
@@ -30,4 +30,10 @@ export const actualizarRevisor = async (id, revisorActualizado) => {
     const revisorRef = doc(db, "revisores", id);
     await updateDoc(revisorRef, revisorActualizado);
     console.log("Revisor actualizado exitosamente");
+}
+
+export const obtenerRevisor = async (id) => {
+    const revisorDoc = await getDoc(doc(db, "revisores", id));
+    const revisor = { id: revisorDoc.id, ...revisorDoc.data() };
+    return revisor;
 }
