@@ -59,7 +59,7 @@ function AsignarRevisores({ obra, refrescarObra }) {
             />
             <GraficaDona porcentaje={porcentajeRevisores}/>
             <Temporizador fechaLimite={obra.fechaLimiteRevisores}/>
-            {/* <button>Comenzar siguiente etapa</button> */}
+            <button>Comenzar la siguiente etapa</button>
         </>
     )
 }
