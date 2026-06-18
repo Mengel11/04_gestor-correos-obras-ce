@@ -10,10 +10,12 @@ export const registrarObra = async (obra) => {
         ...obra,
         fechaAlta: serverTimestamp(),
         estado: 'Verificación de la clasificación',
+        etapasCompletadas: Array(6).fill(false),
         clasificacionApta: null,
         revisoresMinimos: null,
         fechaLimiteRevisores: null,
         revisoresAsignados: [],
+        botonesSiguientePresionados: [false, false],
         revisionesMinimas: null,
         fechaLimiteRevisiones: null,
         decisionFinal: null

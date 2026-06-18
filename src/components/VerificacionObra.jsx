@@ -6,12 +6,13 @@ import { useState } from 'react';
 import { useRetroalimentacion } from '../context/Retroalimentacion';
 import { actualizarObra } from '../services/obrasService';
 
-function VerificacionObra({ obra, refrescarObra }) {
+function VerificacionObra({
+    obra,
+    refrescarObra,
+    onCancelarEdicion,
+}) {
     const [clasificacionApta, setClasificacionApta] = useState(obra.clasificacionApta);
-    const [modoEdicion, setModoEdicion] = useState(obra.clasificacionApta === null);
     const mostrarMensaje = useRetroalimentacion();
-
-    const etapaCompletada = obra.clasificacionApta === true;
 
     const almacenarRespuestaEnFirestore = async (nuevosDatos) => {
         const nuevaObra = {
@@ -19,7 +20,7 @@ function VerificacionObra({ obra, refrescarObra }) {
             ...nuevosDatos
         }
         await actualizarObra(obra.id, nuevaObra)
-        refrescarObra()
+        await refrescarObra()
     }
 
     const handleChangeFormulario = (event) => {
@@ -29,7 +30,7 @@ function VerificacionObra({ obra, refrescarObra }) {
     const handleClickGuardar = async (event) => {
         event.preventDefault()
 
-        if (!clasificacionApta) {
+        if (clasificacionApta === null) {
             mostrarMensaje({tipo: 'Error', texto: 'Por favor seleccione una opción'})
             return
         }
@@ -38,52 +39,37 @@ function VerificacionObra({ obra, refrescarObra }) {
         try {
             const nuevosDatos = {
                 clasificacionApta,
-                estado: clasificacionApta ? 'Establecer revisores y plazos' : 'En espera a reclasificación del autor'
+                estado: clasificacionApta ? 'Establecer revisores y plazos' : 'En espera a reclasificación del autor',
+                etapasCompletadas: clasificacionApta ? [true, false, false, false, false, false] : [false, false, false, false, false, false]
             }
             await almacenarRespuestaEnFirestore(nuevosDatos)
+            if(clasificacionApta) onCancelarEdicion();
             mostrarMensaje({tipo: 'Exito', texto: 'Clasificación registrada exitosamente'})
-            setModoEdicion(false)
         } catch(error) {
             mostrarMensaje({tipo: 'Error', texto: 'No se pudo registrar la clasificación, intente nuevamente'})
             console.error(error)
         }
     }
 
-    const handleClickCancelar = () => {
-        setClasificacionApta(obra.clasificacionApta)
-        setModoEdicion(false)
-    }
-
     return (
         <div>
-            { modoEdicion ? (
-                <form onSubmit={handleClickGuardar}>
-                    <fieldset>
-                        <legend>
-                            ¿La clasificación que asigno el autor es correcta?
-                        </legend>
-                        <label>
-                            <input type="radio" name="clasificacionApta" value="si" checked={clasificacionApta === true} onChange={handleChangeFormulario} />
-                            Sí
-                        </label>
-                        <label>
-                            <input type="radio" name="clasificacionApta" value="no" checked={clasificacionApta === false} onChange={handleChangeFormulario} />
-                            No
-                        </label>
-                    </fieldset>
-                    <button type='submit'>Guardar</button>
-                    <button type='button' onClick={handleClickCancelar}>Cancelar</button>
-                </form>
-            ) : (
-                <>
-                    <h3>Verificación de la clasificación</h3>
-                    {etapaCompletada && (
-                        <button onClick={() => setModoEdicion(true)}>
-                            Editar
-                        </button>
-                    )}
-                </>
-            )}
+            <form onSubmit={handleClickGuardar}>
+                <fieldset>
+                    <legend>
+                        ¿La clasificación que asigno el autor es correcta?
+                    </legend>
+                    <label>
+                        <input type="radio" name="clasificacionApta" value="si" checked={clasificacionApta === true} onChange={handleChangeFormulario} />
+                        Sí
+                    </label>
+                    <label>
+                        <input type="radio" name="clasificacionApta" value="no" checked={clasificacionApta === false} onChange={handleChangeFormulario} />
+                        No
+                    </label>
+                </fieldset>
+                <button type='submit'>Guardar</button>
+                <button type='button' onClick={onCancelarEdicion}>Cancelar</button>
+            </form>
         </div>
     )
 

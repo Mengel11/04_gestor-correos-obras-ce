@@ -1,3 +1,20 @@
+export const calcularEtapasCompletadas = (obra) => {
+    if (!obra) {
+        return Array(6).fill(false)
+    }
+
+    const revisionesCompletadas = obra.revisoresAsignados.filter(revisor => revisor.revisionCompletada).length
+
+    return [
+        obra.clasificacionApta === true,
+        obra.revisoresMinimos !== null && obra.fechaLimiteRevisores !== null,
+        obra.revisoresMinimos !== null && revisoresAsignados.length >= obra.revisoresMinimos,
+        obra.revisionesMinimas !== null && obra.fechaLimiteRevisiones !== null,
+        obra.revisionesMinimas !== null && revisionesCompletadas >= obra.revisionesMinimas,
+        obra.decisionFinal !== null,
+    ]
+}
+
 export const calcularPorcentajeAvance = (estado) => {
     let valor = null
     switch (estado) {
