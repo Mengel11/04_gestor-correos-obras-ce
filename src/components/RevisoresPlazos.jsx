@@ -33,8 +33,8 @@ function RevisoresPlazos({ obra, refrescarObra, onCancelarEdicion }) {
         }
 
         const revisoresMinimos = Number(camposFormulario.revisoresMinimos)
-        if (!Number.isInteger(revisoresMinimos)) {
-            mostrarMensaje({ tipo: 'Error', texto: 'El número de revisores debe ser un número entero' })
+        if (!Number.isInteger(revisoresMinimos) || revisoresMinimos < 1) {
+            mostrarMensaje({ tipo: 'Error', texto: 'El número de revisores debe ser un número entero positivo' })
             return
         }
 

@@ -7,14 +7,10 @@ import ListaRevisores from './ListaRevisores';
 import GraficaDona from './GraficaDona';
 import Temporizador from './Temporizador';
 
-function AsignarRevisores({ obra, refrescarObra }) {
+function AsignarRevisores({ obra, refrescarObra, onCancelarEdicion }) {
     const [revisores, setRevisores] = useState([])
     const mostrarMensaje = useRetroalimentacion()
     const confirmarAccion = useConfirmar()
-    const porcentajeRevisores = Math.round( obra.revisoresAsignados.length / obra.revisoresMinimos * 100 )
-
-    const revisorEstaAsignado = (revisorId) =>
-        obra.revisoresAsignados.some(revisorAsignado => revisorAsignado.id === revisorId)
 
     const cargarRevisores = async () => {
         try {
@@ -28,6 +24,19 @@ function AsignarRevisores({ obra, refrescarObra }) {
 
     useEffect(() => { cargarRevisores() }, [])
 
+    const porcentajeRevisores = Math.round( obra.revisoresAsignados.length / obra.revisoresMinimos * 100 )
+    const etapaCompletada = obra.revisoresAsignados.length >= obra.revisoresMinimos || obra.botonesSiguientePresionados[0]
+    const revisorEstaAsignado = (revisorId) => obra.revisoresAsignados.some(revisorAsignado => revisorAsignado.id === revisorId)
+
+    const almacenarRespuestaEnFirestore = async (nuevosDatos) => {
+        const nuevaObra = {
+            ...obra,
+            ...nuevosDatos,
+        }
+        await actualizarObra(obra.id, nuevaObra)
+        await refrescarObra()
+    }
+
     const handleClickRevisor = async (revisor) => {
         const revisorRepetido = revisorEstaAsignado(revisor.id)
         const confirmar = await confirmarAccion(`¿Esta seguro de que desea ${revisorRepetido ? 'quitar' : 'añadir'} a este revisor? 
@@ -35,20 +44,47 @@ function AsignarRevisores({ obra, refrescarObra }) {
         )
         if( !confirmar ) return
 
+        const revisoresAsignados = revisorRepetido 
+            ? obra.revisoresAsignados.filter(revisorAsignado => revisorAsignado.id !== revisor.id)
+            : [...obra.revisoresAsignados, { id: revisor.id, revisionCompletada: false }]
+
+        const botonesSiguientePresionados = obra.botonesSiguientePresionados[0] ? [true, ...obra.botonesSiguientePresionados.slice(1)] : obra.botonesSiguientePresionados
+
+        const estado = porcentajeRevisores === 100 ? 'Establecer revisiones y plazos' : obra.estado
+
         try {
-            const revisoresAsignados = revisorRepetido 
-                ? obra.revisoresAsignados.filter(revisorAsignado => revisorAsignado.id !== revisor.id)
-                : [...obra.revisoresAsignados, { id: revisor.id, revisionCompletada: false }]
-            await actualizarObra(obra.id, {...obra, revisoresAsignados})
-            mostrarMensaje({tipo: 'Exito', texto: `El revisor se ha ${revisorRepetido ? 'quitado' : 'añadido'} correctamente a la obra`, duracion: 5000})
-            refrescarObra()
-        } catch(error){
-            mostrarMensaje({tipo: 'Error', texto: `No se pudo ${revisorRepetido ? 'quitar' : 'añadir'} el revisor, intente nuevamente`, duracion: 5000})
+            const nuevosDatos = {
+                revisoresAsignados,
+                botonesSiguientePresionados,
+                estado
+            }
+            await almacenarRespuestaEnFirestore(nuevosDatos)
+            mostrarMensaje({ tipo: 'Exito', texto: `El revisor se ha ${revisorRepetido ? 'quitado' : 'añadido'} correctamente a la obra` })
+        } catch (error) {
+            mostrarMensaje({ tipo: 'Error', texto: `No se pudo ${revisorRepetido ? 'quitar' : 'añadir'} el revisor, intente nuevamente` })
             console.error(error)
         }
-        
     }
-    
+
+    const handleClickSiguiente = async () => {
+        const confirmar = await confirmarAccion('¿Estás seguro de que deseas comenzar la siguiente etapa?')
+        if (!confirmar) return
+
+        const estado = 'Establecer revisiones y plazos'
+        const botonesSiguientePresionados = [true, ...obra.botonesSiguientePresionados.slice(1)]
+
+        try {
+            const nuevosDatos = {
+                estado,
+                botonesSiguientePresionados
+            }
+            await almacenarRespuestaEnFirestore(nuevosDatos)
+        } catch (error) {
+            mostrarMensaje({ tipo: 'Error', texto: 'No se pudo comenzar la siguiente etapa, intente nuevamente' })
+            console.error(error)
+        }
+    }
+
     return (
         <>
             <ListaRevisores 
@@ -59,7 +95,12 @@ function AsignarRevisores({ obra, refrescarObra }) {
             />
             <GraficaDona porcentaje={porcentajeRevisores}/>
             <Temporizador fechaLimite={obra.fechaLimiteRevisores}/>
-            <button>Comenzar la siguiente etapa</button>
+            {obra.revisoresAsignados.length > 0 && !etapaCompletada && (
+                <button onClick={handleClickSiguiente}>
+                    Comenzar la siguiente etapa
+                </button>
+            )}
+            <button onClick={onCancelarEdicion}>Cancelar</button>
         </>
     )
 }
