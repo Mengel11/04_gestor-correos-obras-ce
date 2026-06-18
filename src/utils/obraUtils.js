@@ -8,9 +8,9 @@ export const calcularEtapasCompletadas = (obra) => {
     return [
         obra.clasificacionApta === true,
         obra.revisoresMinimos !== null && obra.fechaLimiteRevisores !== null,
-        obra.revisoresMinimos !== null && revisoresAsignados.length >= obra.revisoresMinimos,
+        (obra.revisoresMinimos !== null && obra.revisoresAsignados.length >= obra.revisoresMinimos) || obra.botonesSiguientePresionados[0],
         obra.revisionesMinimas !== null && obra.fechaLimiteRevisiones !== null,
-        obra.revisionesMinimas !== null && revisionesCompletadas >= obra.revisionesMinimas,
+        (obra.revisionesMinimas !== null && revisionesCompletadas >= obra.revisionesMinimas) || obra.botonesSiguientePresionados[1],
         obra.decisionFinal !== null,
     ]
 }
