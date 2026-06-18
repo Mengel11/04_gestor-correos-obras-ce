@@ -6,11 +6,7 @@ import { useState } from 'react';
 import { useRetroalimentacion } from '../context/Retroalimentacion';
 import { actualizarObra } from '../services/obrasService';
 
-function VerificacionObra({
-    obra,
-    refrescarObra,
-    onCancelarEdicion,
-}) {
+function VerificacionObra({ obra, refrescarObra, onCancelarEdicion, }) {
     const [clasificacionApta, setClasificacionApta] = useState(obra.clasificacionApta);
     const mostrarMensaje = useRetroalimentacion();
 
@@ -39,11 +35,9 @@ function VerificacionObra({
         try {
             const nuevosDatos = {
                 clasificacionApta,
-                estado: clasificacionApta ? 'Establecer revisores y plazos' : 'En espera a reclasificación del autor',
-                etapasCompletadas: clasificacionApta ? [true, false, false, false, false, false] : [false, false, false, false, false, false]
+                estado: clasificacionApta ? 'Establecer revisores y plazos' : 'En espera a reclasificación del autor'
             }
             await almacenarRespuestaEnFirestore(nuevosDatos)
-            if(clasificacionApta) onCancelarEdicion();
             mostrarMensaje({tipo: 'Exito', texto: 'Clasificación registrada exitosamente'})
         } catch(error) {
             mostrarMensaje({tipo: 'Error', texto: 'No se pudo registrar la clasificación, intente nuevamente'})
@@ -67,8 +61,8 @@ function VerificacionObra({
                         No
                     </label>
                 </fieldset>
-                <button type='submit'>Guardar</button>
                 <button type='button' onClick={onCancelarEdicion}>Cancelar</button>
+                <button type='submit'>Guardar</button>
             </form>
         </div>
     )

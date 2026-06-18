@@ -90,7 +90,7 @@ function DetallesObra() {
                         const puedeEditar = index === 0 || etapasCompletadas[index - 1]
 
                         return (
-                            <div key={etapa.nombre}>
+                            <div key={etapa.nombre} className='etapa'>
                                 <h3>{etapa.nombre}</h3>
                                 {enEdicion ? (
                                     <EtapaComponente
