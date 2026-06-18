@@ -2,86 +2,86 @@ import { useState } from "react";
 import { useRetroalimentacion } from '../context/Retroalimentacion';
 import { actualizarObra } from '../services/obrasService';
 import { fechaInputAFechaLimite } from '../utils/fechas';
-import FormularioRequisitos from "./FormularioRequisitos";
-import Botones from "./Botones";
 
-function RevisionesPlazos({ obra, refrescarObra }) {
-    const [camposFormulario, setCamposFormulario] = useState([
-        {tipo: 'number', nombre: 'revisionesMinimas', etiqueta: "Número mínimo de revisiones", valor: obra.revisionesMinimas ?? ''},
-        {tipo: 'date', nombre: 'fechaLimiteRevisiones', etiqueta: "Fecha límite", valor: obra.fechaLimiteRevisiones?.toDate().toISOString().slice(0,10) ?? ''}
-    ])
-    const camposCompletados = obra.revisionesMinimas !== null && obra.fechaLimiteRevisiones !== null
-    const [modoEdicion, setModoEdicion] = useState(obra.estado === 'Establecer revisiones y plazos' && !camposCompletados)
+function RevisionesPlazos({ obra, refrescarObra, onCancelarEdicion }) {
+    const [camposFormulario, setCamposFormulario] = useState({
+        revisionesMinimas: obra.revisionesMinimas ?? '',
+        fechaLimiteRevisiones: obra.fechaLimiteRevisiones?.toDate().toISOString().slice(0, 10) ?? '',
+    })
     const mostrarMensaje = useRetroalimentacion();
 
-    const handleChangeFormulario = (e) => {
-        const { name, value } = e.target
-        setCamposFormulario(prev =>
-            prev.map(campo =>
-                campo.nombre === name ? { ...campo, valor: value } : campo
-            )
-        )
+    const almacenarRespuestaEnFirestore = async (nuevosDatos) => {
+        const nuevaObra = {
+            ...obra,
+            ...nuevosDatos,
+        }
+        await actualizarObra(obra.id, nuevaObra)
+        await refrescarObra()
     }
 
-    const handleClickGuardar = async () => {
-        const revisionesMinimasValor = camposFormulario.find(c => c.nombre === 'revisionesMinimas')?.valor
-        const fechaLimiteValor = camposFormulario.find(c => c.nombre === 'fechaLimiteRevisiones')?.valor
+    const handleChangeFormulario = (event) => {
+        const { name, value } = event.target
+        setCamposFormulario(prev => ({ ...prev, [name]: value }))
+    }
 
-        // Validar que los campos no esten vacios
-        if (!revisionesMinimasValor || !fechaLimiteValor) {
+    const handleClickGuardar = async (event) => {
+        event.preventDefault()
+
+        if (!camposFormulario.revisionesMinimas || !camposFormulario.fechaLimiteRevisiones) {
             mostrarMensaje({ tipo: 'Error', texto: 'Por favor completa todos los campos' })
             return
         }
 
-        // Validar que sea un numero entero
-        const revisionesMinimas = Number(revisionesMinimasValor)
-        if (!Number.isInteger(revisionesMinimas)) {
-            mostrarMensaje({ tipo: 'Error', texto: 'El número de revisiones debe ser un número entero' })
+        const revisionesMinimas = Number(camposFormulario.revisionesMinimas)
+        if (!Number.isInteger(revisionesMinimas) || revisionesMinimas < 1 || revisionesMinimas > obra.revisoresAsignados.length) {
+            mostrarMensaje({ tipo: 'Error', texto: 'El número de revisiones debe ser un número entero positivo y menor al número de revisores asignados' })
             return
         }
-        
-        const fechaLimiteRevisiones = fechaInputAFechaLimite(fechaLimiteValor)
-    
+
+        const fechaLimiteRevisiones = fechaInputAFechaLimite(camposFormulario.fechaLimiteRevisiones)
+
         try {
-            const nuevaObra = {
-                ...obra, 
+            const nuevosDatos = {
                 revisionesMinimas,
-                fechaLimiteRevisiones, 
-                estado: 'Revisión en proceso'
+                fechaLimiteRevisiones,
+                estado: 'Revisión en proceso',
             }
-            await actualizarObra(obra.id, nuevaObra)
-            refrescarObra()
-            mostrarMensaje({tipo: 'Exito', texto: 'Datos registrados exitosamente'})
-            setModoEdicion(false)
-        } catch(error) {
-            mostrarMensaje({tipo: 'Error', texto: 'No se pudieron registrar los datos, intente nuevamente'})
+            await almacenarRespuestaEnFirestore(nuevosDatos)
+            mostrarMensaje({ tipo: 'Exito', texto: 'Datos registrados exitosamente' })
+        } catch (error) {
+            mostrarMensaje({ tipo: 'Error', texto: 'No se pudieron registrar los datos, intente nuevamente' })
             console.error(error)
         }
     }
 
-    const handleClickCancelar = () => {
-        setCamposFormulario([
-            {tipo: 'number', nombre: 'revisionesMinimas', etiqueta: "Número mínimo de revisiones", valor: obra.revisionesMinimas ?? ''},
-            {tipo: 'date', nombre: 'fechaLimiteRevisiones', etiqueta: "Fecha límite", valor: obra.fechaLimiteRevisiones?.toDate().toISOString().slice(0,10) ?? ''}
-        ])
-        setModoEdicion(false)
-    }
-
     return (
-        <>
-            <FormularioRequisitos 
-                camposFormulario={camposFormulario}
-                onChangeFormulario={handleChangeFormulario}
-                modoEdicion={modoEdicion}
-            />
-            <Botones 
-                modoEdicion={modoEdicion}
-                existeRespuesta={camposCompletados}
-                onGuardar={handleClickGuardar}
-                onCancelar={handleClickCancelar}
-                onEditar={() => setModoEdicion(true)}
-            />
-        </>
+        <div>
+            <form onSubmit={handleClickGuardar}>
+                <fieldset>
+                    <legend>Establecer revisiones y plazos</legend>
+                    <label>
+                        Número mínimo de revisiones:
+                        <input
+                            type="number"
+                            name="revisionesMinimas"
+                            value={camposFormulario.revisionesMinimas}
+                            onChange={handleChangeFormulario}
+                        />
+                    </label>
+                    <label>
+                        Fecha límite:
+                        <input
+                            type="date"
+                            name="fechaLimiteRevisiones"
+                            value={camposFormulario.fechaLimiteRevisiones}
+                            onChange={handleChangeFormulario}
+                        />
+                    </label>
+                </fieldset>
+                <button type="button" onClick={onCancelarEdicion}>Cancelar</button>
+                <button type="submit">Guardar</button>
+            </form>
+        </div>
     )
 }
 
