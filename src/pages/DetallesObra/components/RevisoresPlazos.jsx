@@ -1,13 +1,13 @@
 import { useState } from "react";
-import { useRetroalimentacion } from '../context/Retroalimentacion';
-import { actualizarObra } from '../services/obrasService';
-import { fechaInputAFechaLimite } from '../utils/fechas';
-import { marcarEtapaCompletada } from '../utils/obraUtils';
+import { useRetroalimentacion } from '../../../context/Retroalimentacion';
+import { actualizarObra } from '../../../services/obrasService';
+import { fechaInputAFechaLimite } from '../../../utils/fechas';
+import { marcarEtapaCompletada } from '../../../utils/obraUtils';
 
-function RevisionesPlazos({ obra, indiceEtapa, refrescarObra, onCancelarEdicion }) {
+function RevisoresPlazos({ obra, indiceEtapa, refrescarObra, onCancelarEdicion }) {
     const [camposFormulario, setCamposFormulario] = useState({
-        revisionesMinimas: obra.revisionesMinimas ?? '',
-        fechaLimiteRevisiones: obra.fechaLimiteRevisiones?.toDate().toISOString().slice(0, 10) ?? '',
+        revisoresMinimos: obra.revisoresMinimos ?? '',
+        fechaLimiteRevisores: obra.fechaLimiteRevisores?.toDate().toISOString().slice(0, 10) ?? '',
     })
     const mostrarMensaje = useRetroalimentacion();
 
@@ -28,30 +28,24 @@ function RevisionesPlazos({ obra, indiceEtapa, refrescarObra, onCancelarEdicion 
     const handleClickGuardar = async (event) => {
         event.preventDefault()
 
-        if (!camposFormulario.revisionesMinimas || !camposFormulario.fechaLimiteRevisiones) {
+        if (!camposFormulario.revisoresMinimos || !camposFormulario.fechaLimiteRevisores) {
             mostrarMensaje({ tipo: 'Error', texto: 'Por favor completa todos los campos' })
             return
         }
 
-        const revisionesMinimas = Number(camposFormulario.revisionesMinimas)
-        if (!Number.isInteger(revisionesMinimas) || revisionesMinimas < 1 || revisionesMinimas > obra.revisoresAsignados.length) {
-            mostrarMensaje({ tipo: 'Error', texto: 'El número de revisiones debe ser un número entero positivo y menor al número de revisores asignados' })
+        const revisoresMinimos = Number(camposFormulario.revisoresMinimos)
+        if (!Number.isInteger(revisoresMinimos) || revisoresMinimos < 1) {
+            mostrarMensaje({ tipo: 'Error', texto: 'El número de revisores debe ser un número entero positivo' })
             return
         }
 
-        const fechaLimiteRevisoresTexto = obra.fechaLimiteRevisores.toDate().toISOString().slice(0, 10)
-        if( camposFormulario.fechaLimiteRevisiones <= fechaLimiteRevisoresTexto ) {
-            mostrarMensaje({ tipo: 'Error', texto: 'La fecha límite de revisiones debe ser mayor a la fecha límite de asignación de revisores' })
-            return
-        }
-
-        const fechaLimiteRevisiones = fechaInputAFechaLimite(camposFormulario.fechaLimiteRevisiones)
+        const fechaLimiteRevisores = fechaInputAFechaLimite(camposFormulario.fechaLimiteRevisores)
 
         try {
             const nuevosDatos = {
-                revisionesMinimas,
-                fechaLimiteRevisiones,
-                estado: 'Revisión en proceso',
+                revisoresMinimos,
+                fechaLimiteRevisores,
+                estado: 'Asignación de revisores',
                 etapasCompletadas: marcarEtapaCompletada(obra.etapasCompletadas, indiceEtapa, true)
             }
             await almacenarRespuestaEnFirestore(nuevosDatos)
@@ -66,13 +60,13 @@ function RevisionesPlazos({ obra, indiceEtapa, refrescarObra, onCancelarEdicion 
         <div>
             <form onSubmit={handleClickGuardar}>
                 <fieldset>
-                    <legend>Establecer revisiones y plazos</legend>
+                    <legend>Establecer revisores y plazos</legend>
                     <label>
-                        Número mínimo de revisiones:
+                        Número mínimo de revisores:
                         <input
                             type="number"
-                            name="revisionesMinimas"
-                            value={camposFormulario.revisionesMinimas}
+                            name="revisoresMinimos"
+                            value={camposFormulario.revisoresMinimos}
                             onChange={handleChangeFormulario}
                         />
                     </label>
@@ -80,8 +74,8 @@ function RevisionesPlazos({ obra, indiceEtapa, refrescarObra, onCancelarEdicion 
                         Fecha límite:
                         <input
                             type="date"
-                            name="fechaLimiteRevisiones"
-                            value={camposFormulario.fechaLimiteRevisiones}
+                            name="fechaLimiteRevisores"
+                            value={camposFormulario.fechaLimiteRevisores}
                             onChange={handleChangeFormulario}
                         />
                     </label>
@@ -93,4 +87,4 @@ function RevisionesPlazos({ obra, indiceEtapa, refrescarObra, onCancelarEdicion 
     )
 }
 
-export default RevisionesPlazos;
+export default RevisoresPlazos;

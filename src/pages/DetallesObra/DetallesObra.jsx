@@ -1,16 +1,16 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { useRetroalimentacion } from '../context/Retroalimentacion';
-import { obtenerObra, actualizarObra } from '../services/obrasService';
-import { obtenerEtapasCompletadas } from '../utils/obraUtils';
-import TarjetaObra from '../components/TarjetaObra';
-import FormularioObra from '../components/FormularioObra';
-import VerificacionObra from '../components/VerificacionObra';
-import RevisoresPlazos from '../components/RevisoresPlazos';
-import AsignarRevisores from '../components/AsignarRevisores';
-import RevisionesPlazos from '../components/RevisionesPlazos';
-import Revision from '../components/Revision';
-import DecisionFinal from '../components/DecisionFinal';
+import { useRetroalimentacion } from '../../context/Retroalimentacion';
+import { obtenerObra, actualizarObra } from '../../services/obrasService';
+import { obtenerEtapasCompletadas } from '../../utils/obraUtils';
+import TarjetaObra from './components/TarjetaObra';
+import FormularioObra from '../Obras/components/FormularioObra';
+import VerificacionObra from './components/VerificacionObra';
+import RevisoresPlazos from './components/RevisoresPlazos';
+import AsignarRevisores from './components/AsignarRevisores';
+import RevisionesPlazos from './components/RevisionesPlazos';
+import Revision from './components/Revision';
+import DecisionFinal from './components/DecisionFinal';
 
 const ETAPAS_OBRA = [
     { nombre: 'Verificación de la clasificación', componente: VerificacionObra },

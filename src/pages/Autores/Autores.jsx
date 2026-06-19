@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react'
-import { useConfirmar } from '../context/Confirmar'
-import { useRetroalimentacion } from '../context/Retroalimentacion'
-import { registrarAutor, obtenerAutores, eliminarAutor, actualizarAutor } from '../services/autoresService'
-import { validarEmail } from '../utils/validaciones'
-import FormularioAutor from '../components/FormularioAutor'
-import ListaAutores from '../components/ListaAutores'
+import { useConfirmar } from '../../context/Confirmar'
+import { useRetroalimentacion } from '../../context/Retroalimentacion'
+import { registrarAutor, obtenerAutores, eliminarAutor, actualizarAutor } from '../../services/autoresService'
+import { validarEmail } from '../../utils/validaciones'
+import FormularioAutor from './components/FormularioAutor'
+import ListaAutores from './components/ListaAutores'
 
 
 function Autores() {

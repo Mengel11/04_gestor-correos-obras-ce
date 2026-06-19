@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { useRetroalimentacion } from '../context/Retroalimentacion';
-import { obtenerAutores } from '../services/autoresService';
-import ListaAutores from './ListaAutores'
+import { useRetroalimentacion } from '../../../context/Retroalimentacion';
+import { obtenerAutores } from '../../../services/autoresService';
+import ListaAutores from '../../Autores/components/ListaAutores'
 
 function FormularioObra({ obraAEditar, onGuardar, onCancelar }) {
     const [obraFormulario, setObraFormulario] = useState(obraAEditar)

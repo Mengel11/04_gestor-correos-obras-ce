@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom';
-import { useRetroalimentacion } from '../context/Retroalimentacion'
-import { obtenerAutor } from '../services/autoresService';
-import { calcularPorcentajeAvance } from '../utils/obraUtils';
-import TarjetaAutor from './TarjetaAutor';
+import { useRetroalimentacion } from '../../../context/Retroalimentacion'
+import { obtenerAutor } from '../../../services/autoresService';
+import { calcularPorcentajeAvance } from '../../../utils/obraUtils';
+import TarjetaAutor from '../../Autores/components/TarjetaAutor';
 import GraficaDona from './GraficaDona';
-import FormularioObra from './FormularioObra';
+import FormularioObra from '../../Obras/components/FormularioObra';
 
 function TarjetaObra({ obra, onEditar }) {
     const [autoresObra, setAutoresObra] = useState([]);

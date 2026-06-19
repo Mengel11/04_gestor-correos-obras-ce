@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
-import { useRetroalimentacion } from '../context/Retroalimentacion'
-import { useConfirmar } from '../context/Confirmar'
-import { obtenerObras, registrarObra, actualizarObra, eliminarObra } from '../services/obrasService'
-import FormularioObra from '../components/FormularioObra'
-import TablaObras from '../components/TablaObras'
+import { useRetroalimentacion } from '../../context/Retroalimentacion'
+import { useConfirmar } from '../../context/Confirmar'
+import { obtenerObras, registrarObra, actualizarObra, eliminarObra } from '../../services/obrasService'
+import FormularioObra from './components/FormularioObra'
+import TablaObras from './components/TablaObras'
 
 function Obras() {
   const [mostrarFormulario, setMostrarFormulario] = useState(false)

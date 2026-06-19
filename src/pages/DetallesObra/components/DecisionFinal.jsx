@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { useRetroalimentacion } from '../context/Retroalimentacion';
-import { actualizarObra } from '../services/obrasService';
-import { marcarEtapaCompletada } from '../utils/obraUtils';
+import { useRetroalimentacion } from '../../../context/Retroalimentacion';
+import { actualizarObra } from '../../../services/obrasService';
+import { marcarEtapaCompletada } from '../../../utils/obraUtils';
 
 function DecisionFinal({ obra, indiceEtapa, refrescarObra, onCancelarEdicion }) {
     const [decisionFinal, setDecisionFinal] = useState(obra.decisionFinal ?? '');

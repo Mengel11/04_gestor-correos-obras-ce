@@ -3,9 +3,9 @@
 */
 
 import { useState } from 'react';
-import { useRetroalimentacion } from '../context/Retroalimentacion';
-import { actualizarObra } from '../services/obrasService';
-import { marcarEtapaCompletada } from '../utils/obraUtils';
+import { useRetroalimentacion } from '../../../context/Retroalimentacion';
+import { actualizarObra } from '../../../services/obrasService';
+import { marcarEtapaCompletada } from '../../../utils/obraUtils';
 
 function VerificacionObra({ obra, indiceEtapa, refrescarObra, onCancelarEdicion, }) {
     const [clasificacionApta, setClasificacionApta] = useState(obra.clasificacionApta);

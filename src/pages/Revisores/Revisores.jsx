@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react'
-import { useConfirmar } from '../context/Confirmar'
-import { useRetroalimentacion } from '../context/Retroalimentacion'
-import { registrarRevisor, obtenerRevisores, eliminarRevisor, actualizarRevisor } from '../services/revisoresService'
-import { validarEmail } from '../utils/validaciones'
-import FormularioRevisor from '../components/FormularioRevisor'
-import ListaRevisores from '../components/ListaRevisores'
+import { useConfirmar } from '../../context/Confirmar'
+import { useRetroalimentacion } from '../../context/Retroalimentacion'
+import { registrarRevisor, obtenerRevisores, eliminarRevisor, actualizarRevisor } from '../../services/revisoresService'
+import { validarEmail } from '../../utils/validaciones'
+import FormularioRevisor from './components/FormularioRevisor'
+import ListaRevisores from './components/ListaRevisores'
 
 
 function Revisores() {

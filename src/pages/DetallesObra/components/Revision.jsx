@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import { useRetroalimentacion } from '../context/Retroalimentacion';
-import { useConfirmar } from '../context/Confirmar'
-import { obtenerRevisor } from '../services/revisoresService';
-import { actualizarObra } from '../services/obrasService';
-import { marcarEtapaCompletada } from '../utils/obraUtils';
-import ListaRevisores from './ListaRevisores';
+import { useRetroalimentacion } from '../../../context/Retroalimentacion';
+import { useConfirmar } from '../../../context/Confirmar'
+import { obtenerRevisor } from '../../../services/revisoresService';
+import { actualizarObra } from '../../../services/obrasService';
+import { marcarEtapaCompletada } from '../../../utils/obraUtils';
+import ListaRevisores from '../../Revisores/components/ListaRevisores';
 import GraficaDona from './GraficaDona';
 import Temporizador from './Temporizador';
 

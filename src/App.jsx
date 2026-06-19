@@ -1,9 +1,9 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Layout from './components/Layout'
-import Obras from './pages/Obras'
-import Autores from './pages/Autores'
-import Revisores from './pages/Revisores'
-import DetallesObra from './pages/DetallesObra'
+import Obras from './pages/Obras/Obras'
+import Autores from './pages/Autores/Autores'
+import Revisores from './pages/Revisores/Revisores'
+import DetallesObra from './pages/DetallesObra/DetallesObra'
 
 function App() {
   return (

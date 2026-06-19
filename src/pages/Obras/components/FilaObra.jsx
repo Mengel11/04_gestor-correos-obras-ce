@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { calcularPorcentajeAvance } from '../utils/obraUtils';
+import { calcularPorcentajeAvance } from '../../../utils/obraUtils';
 
 function FilaObra({ obra, botones }) {
     
