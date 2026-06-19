@@ -1,18 +1,19 @@
-export const calcularEtapasCompletadas = (obra) => {
+export const obtenerEtapasCompletadas = (obra) => {
     if (!obra) {
         return Array(6).fill(false)
     }
+    return obra.etapasCompletadas
+}
 
-    const revisionesCompletadas = obra.revisoresAsignados.filter(revisor => revisor.revisionCompletada).length
-
-    return [
-        obra.clasificacionApta === true,
-        obra.revisoresMinimos !== null && obra.fechaLimiteRevisores !== null,
-        (obra.revisoresMinimos !== null && obra.revisoresAsignados.length >= obra.revisoresMinimos) || obra.botonesSiguientePresionados[0],
-        obra.revisionesMinimas !== null && obra.fechaLimiteRevisiones !== null,
-        (obra.revisionesMinimas !== null && revisionesCompletadas >= obra.revisionesMinimas) || obra.botonesSiguientePresionados[1],
-        obra.decisionFinal !== null,
-    ]
+// Marca la etapa indicada con el valor recibido. Si la etapa queda incompleta,
+// propaga el false a todas las etapas siguientes (regla de cascada), conservando
+// el valor de las anteriores.
+export const marcarEtapaCompletada = (etapasCompletadas, indice, completada) => {
+    return etapasCompletadas.map((valor, i) => {
+        if (i === indice) return completada
+        if (i > indice && !completada) return false
+        return valor
+    })
 }
 
 export const calcularPorcentajeAvance = (estado) => {

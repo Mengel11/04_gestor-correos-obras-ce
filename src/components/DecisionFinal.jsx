@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useRetroalimentacion } from '../context/Retroalimentacion';
 import { actualizarObra } from '../services/obrasService';
+import { marcarEtapaCompletada } from '../utils/obraUtils';
 
-function DecisionFinal({ obra, refrescarObra, onCancelarEdicion }) {
+function DecisionFinal({ obra, indiceEtapa, refrescarObra, onCancelarEdicion }) {
     const [decisionFinal, setDecisionFinal] = useState(obra.decisionFinal ?? '');
     const mostrarMensaje = useRetroalimentacion();
 
@@ -31,6 +32,7 @@ function DecisionFinal({ obra, refrescarObra, onCancelarEdicion }) {
             const nuevosDatos = {
                 decisionFinal,
                 estado: 'Decisión final registrada',
+                etapasCompletadas: marcarEtapaCompletada(obra.etapasCompletadas, indiceEtapa, true)
             }
             await almacenarRespuestaEnFirestore(nuevosDatos)
             mostrarMensaje({ tipo: 'Exito', texto: 'Decisión final registrada exitosamente' })

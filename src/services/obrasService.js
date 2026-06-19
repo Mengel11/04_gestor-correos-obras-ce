@@ -14,7 +14,7 @@ export const registrarObra = async (obra) => {
         revisoresMinimos: null,
         fechaLimiteRevisores: null,
         revisoresAsignados: [],
-        botonesSiguientePresionados: [false, false],
+        etapasCompletadas: Array(6).fill(false),
         revisionesMinimas: null,
         fechaLimiteRevisiones: null,
         decisionFinal: null

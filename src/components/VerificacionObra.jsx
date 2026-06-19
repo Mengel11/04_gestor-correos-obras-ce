@@ -5,8 +5,9 @@
 import { useState } from 'react';
 import { useRetroalimentacion } from '../context/Retroalimentacion';
 import { actualizarObra } from '../services/obrasService';
+import { marcarEtapaCompletada } from '../utils/obraUtils';
 
-function VerificacionObra({ obra, refrescarObra, onCancelarEdicion, }) {
+function VerificacionObra({ obra, indiceEtapa, refrescarObra, onCancelarEdicion, }) {
     const [clasificacionApta, setClasificacionApta] = useState(obra.clasificacionApta);
     const mostrarMensaje = useRetroalimentacion();
 
@@ -35,7 +36,8 @@ function VerificacionObra({ obra, refrescarObra, onCancelarEdicion, }) {
         try {
             const nuevosDatos = {
                 clasificacionApta,
-                estado: clasificacionApta ? 'Establecer revisores y plazos' : 'En espera a reclasificación del autor'
+                estado: clasificacionApta ? 'Establecer revisores y plazos' : 'En espera a reclasificación del autor',
+                etapasCompletadas: marcarEtapaCompletada(obra.etapasCompletadas, indiceEtapa, clasificacionApta === true)
             }
             await almacenarRespuestaEnFirestore(nuevosDatos)
             mostrarMensaje({tipo: 'Exito', texto: 'Clasificación registrada exitosamente'})

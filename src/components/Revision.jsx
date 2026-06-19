@@ -3,11 +3,12 @@ import { useRetroalimentacion } from '../context/Retroalimentacion';
 import { useConfirmar } from '../context/Confirmar'
 import { obtenerRevisor } from '../services/revisoresService';
 import { actualizarObra } from '../services/obrasService';
+import { marcarEtapaCompletada } from '../utils/obraUtils';
 import ListaRevisores from './ListaRevisores';
 import GraficaDona from './GraficaDona';
 import Temporizador from './Temporizador';
 
-function Revision({ obra, refrescarObra, onCancelarEdicion }) {
+function Revision({ obra, indiceEtapa, refrescarObra, onCancelarEdicion }) {
     const [revisores, setRevisores] = useState([])
     const mostrarMensaje = useRetroalimentacion()
     const confirmarAccion = useConfirmar()
@@ -27,7 +28,7 @@ function Revision({ obra, refrescarObra, onCancelarEdicion }) {
 
     const numeroRevisiones = obra.revisoresAsignados.filter(revisor => revisor.revisionCompletada).length
     const porcentajeRevisiones = Math.round(numeroRevisiones / obra.revisionesMinimas * 100)
-    const etapaCompletada = numeroRevisiones >= obra.revisionesMinimas || obra.botonesSiguientePresionados[1]
+    const etapaCompletada = obra.etapasCompletadas[indiceEtapa]
     const revisionEstaCompletada = (revisorId) => obra.revisoresAsignados.find(revisorAsignado => revisorAsignado.id === revisorId)?.revisionCompletada
 
     const almacenarRespuestaEnFirestore = async (nuevosDatos) => {
@@ -50,16 +51,15 @@ function Revision({ obra, refrescarObra, onCancelarEdicion }) {
                 : revisorAsignado
         )
 
-        const botonesSiguientePresionados = obra.botonesSiguientePresionados[1] ? [...obra.botonesSiguientePresionados.slice(0, 1), true] : obra.botonesSiguientePresionados
-
         const numeroRevisiones = revisoresAsignados.filter(revisor => revisor.revisionCompletada).length
-        const estado = numeroRevisiones >= obra.revisionesMinimas ? 'Toma de decisión final' : 'Revisión en proceso'
+        const seVuelveEtapaCompletada = numeroRevisiones >= obra.revisionesMinimas
+        const estado = seVuelveEtapaCompletada ? 'Toma de decisión final' : 'Revisión en proceso'
 
         try {
             const nuevosDatos = {
                 revisoresAsignados,
-                botonesSiguientePresionados,
-                estado
+                estado,
+                etapasCompletadas: marcarEtapaCompletada(obra.etapasCompletadas, indiceEtapa, seVuelveEtapaCompletada)
             }
             await almacenarRespuestaEnFirestore(nuevosDatos)
             mostrarMensaje({ tipo: 'Exito', texto: `La revisión se ha ${revisionRegistrada ? 'marcado como pendiente' : 'registrado'} correctamente` })
@@ -73,13 +73,10 @@ function Revision({ obra, refrescarObra, onCancelarEdicion }) {
         const confirmar = await confirmarAccion('¿Estás seguro de que deseas comenzar a tomar la decisión final? Esto enviara un correo de notificación a todo el consejo')
         if (!confirmar) return
 
-        const estado = 'Toma de decisión final'
-        const botonesSiguientePresionados = [...obra.botonesSiguientePresionados.slice(0, 1), true]
-
         try {
             const nuevosDatos = {
-                estado,
-                botonesSiguientePresionados
+                estado: 'Toma de decisión final',
+                etapasCompletadas: marcarEtapaCompletada(obra.etapasCompletadas, indiceEtapa, true)
             }
             await almacenarRespuestaEnFirestore(nuevosDatos)
         } catch (error) {

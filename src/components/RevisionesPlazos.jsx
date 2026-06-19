@@ -2,8 +2,9 @@ import { useState } from "react";
 import { useRetroalimentacion } from '../context/Retroalimentacion';
 import { actualizarObra } from '../services/obrasService';
 import { fechaInputAFechaLimite } from '../utils/fechas';
+import { marcarEtapaCompletada } from '../utils/obraUtils';
 
-function RevisionesPlazos({ obra, refrescarObra, onCancelarEdicion }) {
+function RevisionesPlazos({ obra, indiceEtapa, refrescarObra, onCancelarEdicion }) {
     const [camposFormulario, setCamposFormulario] = useState({
         revisionesMinimas: obra.revisionesMinimas ?? '',
         fechaLimiteRevisiones: obra.fechaLimiteRevisiones?.toDate().toISOString().slice(0, 10) ?? '',
@@ -38,6 +39,12 @@ function RevisionesPlazos({ obra, refrescarObra, onCancelarEdicion }) {
             return
         }
 
+        const fechaLimiteRevisoresTexto = obra.fechaLimiteRevisores.toDate().toISOString().slice(0, 10)
+        if( camposFormulario.fechaLimiteRevisiones <= fechaLimiteRevisoresTexto ) {
+            mostrarMensaje({ tipo: 'Error', texto: 'La fecha límite de revisiones debe ser mayor a la fecha límite de asignación de revisores' })
+            return
+        }
+
         const fechaLimiteRevisiones = fechaInputAFechaLimite(camposFormulario.fechaLimiteRevisiones)
 
         try {
@@ -45,6 +52,7 @@ function RevisionesPlazos({ obra, refrescarObra, onCancelarEdicion }) {
                 revisionesMinimas,
                 fechaLimiteRevisiones,
                 estado: 'Revisión en proceso',
+                etapasCompletadas: marcarEtapaCompletada(obra.etapasCompletadas, indiceEtapa, true)
             }
             await almacenarRespuestaEnFirestore(nuevosDatos)
             mostrarMensaje({ tipo: 'Exito', texto: 'Datos registrados exitosamente' })

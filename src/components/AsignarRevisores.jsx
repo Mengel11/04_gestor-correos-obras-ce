@@ -3,11 +3,12 @@ import { useRetroalimentacion } from '../context/Retroalimentacion';
 import { useConfirmar } from '../context/Confirmar'
 import { obtenerRevisores } from '../services/revisoresService';
 import { actualizarObra } from '../services/obrasService';
+import { marcarEtapaCompletada } from '../utils/obraUtils';
 import ListaRevisores from './ListaRevisores';
 import GraficaDona from './GraficaDona';
 import Temporizador from './Temporizador';
 
-function AsignarRevisores({ obra, refrescarObra, onCancelarEdicion }) {
+function AsignarRevisores({ obra, indiceEtapa, refrescarObra, onCancelarEdicion }) {
     const [revisores, setRevisores] = useState([])
     const mostrarMensaje = useRetroalimentacion()
     const confirmarAccion = useConfirmar()
@@ -21,11 +22,10 @@ function AsignarRevisores({ obra, refrescarObra, onCancelarEdicion }) {
             console.error(error)
         }
     }
-
     useEffect(() => { cargarRevisores() }, [])
 
     const porcentajeRevisores = Math.round( obra.revisoresAsignados.length / obra.revisoresMinimos * 100 )
-    const etapaCompletada = obra.revisoresAsignados.length >= obra.revisoresMinimos || obra.botonesSiguientePresionados[0]
+    const etapaCompletada = obra.etapasCompletadas[indiceEtapa]
     const revisorEstaAsignado = (revisorId) => obra.revisoresAsignados.some(revisorAsignado => revisorAsignado.id === revisorId)
 
     const almacenarRespuestaEnFirestore = async (nuevosDatos) => {
@@ -48,15 +48,14 @@ function AsignarRevisores({ obra, refrescarObra, onCancelarEdicion }) {
             ? obra.revisoresAsignados.filter(revisorAsignado => revisorAsignado.id !== revisor.id)
             : [...obra.revisoresAsignados, { id: revisor.id, revisionCompletada: false }]
 
-        const botonesSiguientePresionados = obra.botonesSiguientePresionados[0] ? [true, ...obra.botonesSiguientePresionados.slice(1)] : obra.botonesSiguientePresionados
-
-        const estado = revisoresAsignados.length >= obra.revisoresMinimos ? 'Establecer revisiones y plazos' : 'Asignación de revisores'
+        const seVuelveEtapaCompletada = revisoresAsignados.length >= obra.revisoresMinimos
+        const estado = seVuelveEtapaCompletada ? 'Establecer revisiones y plazos' : 'Asignación de revisores'
 
         try {
             const nuevosDatos = {
                 revisoresAsignados,
-                botonesSiguientePresionados,
-                estado
+                estado,
+                etapasCompletadas: marcarEtapaCompletada(obra.etapasCompletadas, indiceEtapa, seVuelveEtapaCompletada)
             }
             await almacenarRespuestaEnFirestore(nuevosDatos)
             mostrarMensaje({ tipo: 'Exito', texto: `El revisor se ha ${revisorRepetido ? 'quitado' : 'añadido'} correctamente a la obra` })
@@ -70,13 +69,10 @@ function AsignarRevisores({ obra, refrescarObra, onCancelarEdicion }) {
         const confirmar = await confirmarAccion('¿Estás seguro de que deseas comenzar la siguiente etapa?')
         if (!confirmar) return
 
-        const estado = 'Establecer revisiones y plazos'
-        const botonesSiguientePresionados = [true, ...obra.botonesSiguientePresionados.slice(1)]
-
         try {
             const nuevosDatos = {
-                estado,
-                botonesSiguientePresionados
+                estado: 'Establecer revisiones y plazos',
+                etapasCompletadas: marcarEtapaCompletada(obra.etapasCompletadas, indiceEtapa, true)
             }
             await almacenarRespuestaEnFirestore(nuevosDatos)
         } catch (error) {

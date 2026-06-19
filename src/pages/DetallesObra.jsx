@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useRetroalimentacion } from '../context/Retroalimentacion';
 import { obtenerObra, actualizarObra } from '../services/obrasService';
-import { calcularEtapasCompletadas } from '../utils/obraUtils';
+import { obtenerEtapasCompletadas } from '../utils/obraUtils';
 import TarjetaObra from '../components/TarjetaObra';
 import FormularioObra from '../components/FormularioObra';
 import VerificacionObra from '../components/VerificacionObra';
@@ -40,7 +40,7 @@ function DetallesObra() {
     }
     useEffect(() => { cargarObra() }, [])
 
-    const etapasCompletadas = calcularEtapasCompletadas(obra)
+    const etapasCompletadas = obtenerEtapasCompletadas(obra)
     
     const handleCancelarFormulario = () => {
         setEditarObra(false)
@@ -95,6 +95,7 @@ function DetallesObra() {
                                 {( puedeEditar && enEdicion ) ? (
                                     <EtapaComponente
                                         obra={obra}
+                                        indiceEtapa={index}
                                         refrescarObra={cargarObra}
                                         onCancelarEdicion={() => cancelarEdicionEtapa(index)}
                                     />
