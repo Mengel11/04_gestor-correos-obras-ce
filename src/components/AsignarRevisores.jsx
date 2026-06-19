@@ -50,7 +50,7 @@ function AsignarRevisores({ obra, refrescarObra, onCancelarEdicion }) {
 
         const botonesSiguientePresionados = obra.botonesSiguientePresionados[0] ? [true, ...obra.botonesSiguientePresionados.slice(1)] : obra.botonesSiguientePresionados
 
-        const estado = porcentajeRevisores === 100 ? 'Establecer revisiones y plazos' : obra.estado
+        const estado = revisoresAsignados.length >= obra.revisoresMinimos ? 'Establecer revisiones y plazos' : 'Asignación de revisores'
 
         try {
             const nuevosDatos = {

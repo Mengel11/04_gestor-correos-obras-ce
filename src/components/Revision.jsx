@@ -53,8 +53,7 @@ function Revision({ obra, refrescarObra, onCancelarEdicion }) {
         const botonesSiguientePresionados = obra.botonesSiguientePresionados[1] ? [...obra.botonesSiguientePresionados.slice(0, 1), true] : obra.botonesSiguientePresionados
 
         const numeroRevisiones = revisoresAsignados.filter(revisor => revisor.revisionCompletada).length
-        const porcentajeRevisiones = Math.round(numeroRevisiones / obra.revisionesMinimas * 100)
-        const estado = porcentajeRevisiones === 100 ? 'Toma de decisión final' : obra.estado
+        const estado = numeroRevisiones >= obra.revisionesMinimas ? 'Toma de decisión final' : 'Revisión en proceso'
 
         try {
             const nuevosDatos = {

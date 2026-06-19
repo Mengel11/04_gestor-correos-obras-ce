@@ -87,19 +87,23 @@ function DetallesObra() {
                     {ETAPAS_OBRA.map((etapa, index) => {
                         const EtapaComponente = etapa.componente
                         const enEdicion = etapasEnEdicion[index]
-                        const puedeEditar = index === 0 || etapasCompletadas[index - 1]
+                        const puedeEditar = index === 0 || etapasCompletadas.filter((_,i) => i < index).every(valor => valor)
 
                         return (
                             <div key={etapa.nombre} className='etapa'>
-                                <h3>{etapa.nombre}</h3>
-                                {enEdicion ? (
+                                <h2>{etapa.nombre}</h2>
+                                {( puedeEditar && enEdicion ) ? (
                                     <EtapaComponente
                                         obra={obra}
                                         refrescarObra={cargarObra}
                                         onCancelarEdicion={() => cancelarEdicionEtapa(index)}
                                     />
                                 ) : (
-                                    <button type="button" disabled={!puedeEditar} onClick={() => activarEdicionEtapa(index)}>Editar</button>
+                                    <button 
+                                        disabled={!puedeEditar} 
+                                        onClick={() => activarEdicionEtapa(index)}
+                                        type="button"
+                                    >Editar</button>
                                 )}
                             </div>
                         )
