@@ -10,7 +10,7 @@ function Obras() {
   const [obraAEditar, setObraAEditar] = useState({ titulo: '', clasificacion: '', autores: [] })
   const [obras, setObras] = useState([])
   const mostrarMensaje = useRetroalimentacion()
-  const confirmarAcción = useConfirmar()
+  const confirmarAccion = useConfirmar()
 
   const cargarObras = async () => {
     try {

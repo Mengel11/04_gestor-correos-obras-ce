@@ -14,6 +14,7 @@ export const registrarObra = async (obra) => {
         revisoresMinimos: null,
         fechaLimiteRevisores: null,
         revisoresAsignados: [],
+        etapasCompletadas: Array(6).fill(false),
         revisionesMinimas: null,
         fechaLimiteRevisiones: null,
         decisionFinal: null
@@ -33,7 +34,8 @@ export const eliminarObra = async (id) => {
 
 export const actualizarObra = async (id, obraActualizada) => {
     const obraRef = doc(db, "obras", id);
-    await updateDoc(obraRef, obraActualizada);
+    const { id: _id, ...datos } = obraActualizada;
+    await updateDoc(obraRef, datos);
 }
 
 export const obtenerObra = async (id) => {

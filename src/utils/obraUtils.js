@@ -1,3 +1,21 @@
+export const obtenerEtapasCompletadas = (obra) => {
+    if (!obra) {
+        return Array(6).fill(false)
+    }
+    return obra.etapasCompletadas
+}
+
+// Marca la etapa indicada con el valor recibido. Si la etapa queda incompleta,
+// propaga el false a todas las etapas siguientes (regla de cascada), conservando
+// el valor de las anteriores.
+export const marcarEtapaCompletada = (etapasCompletadas, indice, completada) => {
+    return etapasCompletadas.map((valor, i) => {
+        if (i === indice) return completada
+        if (i > indice && !completada) return false
+        return valor
+    })
+}
+
 export const calcularPorcentajeAvance = (estado) => {
     let valor = null
     switch (estado) {
