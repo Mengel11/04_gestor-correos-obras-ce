@@ -59,7 +59,7 @@ function Autores() {
                 await registrarAutor(autorFormulario)
             }
             handleCancelarFormulario()
-            mostrarMensaje({tipo: 'Éxito', texto: 'Autor guardado exitosamente'})
+            mostrarMensaje({tipo: 'Exito', texto: 'Autor guardado exitosamente'})
             await cargarAutores()
         } catch (error) {
             mostrarMensaje({tipo: 'Error', texto: 'Error al guardar el autor, intente nuevamente'})
@@ -77,7 +77,7 @@ function Autores() {
         
         try {
             await eliminarAutor(autor.id)
-            mostrarMensaje({tipo: 'Éxito', texto: 'Autor eliminado exitosamente'})
+            mostrarMensaje({tipo: 'Exito', texto: 'Autor eliminado exitosamente'})
             await cargarAutores()
         } catch (error) {
             mostrarMensaje({tipo: 'Error', texto: 'Error al eliminar el autor, intente nuevamente'})

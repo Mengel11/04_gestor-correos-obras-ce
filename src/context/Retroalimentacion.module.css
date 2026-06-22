@@ -1,0 +1,73 @@
+.toast {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 1100;
+  max-width: min(90vw, 380px);
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--border);
+  border-left-width: 4px;
+  border-radius: 8px;
+  background: var(--bg);
+  box-shadow: var(--shadow);
+  text-align: left;
+  animation: entrar 0.25s ease-out;
+}
+
+@keyframes entrar {
+  from {
+    opacity: 0;
+    transform: translateY(-0.5rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tipo {
+  margin: 0 0 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.texto {
+  margin: 0;
+  color: var(--text-h);
+  line-height: 1.45;
+}
+
+.exito {
+  border-left-color: var(--success);
+}
+
+.exito .tipo {
+  color: var(--success);
+}
+
+.error {
+  border-left-color: var(--error);
+}
+
+.error .tipo {
+  color: var(--error);
+}
+
+.advertencia {
+  border-left-color: var(--warning);
+}
+
+.advertencia .tipo {
+  color: var(--warning);
+}
+
+.informar {
+  border-left-color: var(--accent);
+}
+
+.informar .tipo {
+  color: var(--accent);
+}

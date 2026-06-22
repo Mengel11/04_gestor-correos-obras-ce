@@ -60,7 +60,7 @@ function Revisores() {
                 await registrarRevisor(revisorFormulario)
             }
             handleCancelarFormulario()
-            mostrarMensaje({tipo: 'Éxito', texto: 'Revisor guardado exitosamente'})
+            mostrarMensaje({tipo: 'Exito', texto: 'Revisor guardado exitosamente'})
             cargarRevisores()
         } catch (error) {
             mostrarMensaje({tipo: 'Error', texto: 'Error al guardar el revisor'})
@@ -78,7 +78,7 @@ function Revisores() {
         
         try {
             await eliminarRevisor(revisor.id)
-            mostrarMensaje({tipo: 'Éxito', texto: 'Revisor eliminado exitosamente'})
+            mostrarMensaje({tipo: 'Exito', texto: 'Revisor eliminado exitosamente'})
             cargarRevisores()
         } catch (error) {
             mostrarMensaje({tipo: 'Error', texto: 'Error al eliminar el revisor, intente nuevamente'})
