@@ -4,6 +4,7 @@ import { useConfirmar } from '../../context/Confirmar'
 import { obtenerObras, registrarObra, actualizarObra, eliminarObra } from '../../services/obrasService'
 import FormularioObra from './components/FormularioObra'
 import TablaObras from './components/TablaObras'
+import styles from './styles/Obras.module.css'
 
 function Obras() {
   const [mostrarFormulario, setMostrarFormulario] = useState(false)
@@ -71,8 +72,16 @@ function Obras() {
   }
 
   return (
-    <>
-      <button onClick={() => setMostrarFormulario(true)}>Nueva Obra</button>
+    <div className={styles.pagina}>
+      <div className={styles.encabezado}>
+        <div className={styles.titulos}>
+          <h1 className={styles.titulo}>Obras</h1>
+          <p className={styles.subtitulo}>Gestión de obras del Consejo Editorial</p>
+        </div>
+        <button type="button" className={styles.botonNuevo} onClick={() => setMostrarFormulario(true)}>
+          Nueva Obra
+        </button>
+      </div>
       {mostrarFormulario && (
         <FormularioObra 
           obraAEditar={obraAEditar}
@@ -89,9 +98,9 @@ function Obras() {
           ]}
         />
       ) : (
-        <p>Aun no hay obras registradas</p>
+        <p className={styles.vacio}>Aun no hay obras registradas</p>
       )}
-    </>
+    </div>
   )
 }
 

@@ -1,4 +1,5 @@
 import TarjetaAutor from './TarjetaAutor'
+import { IconoEditar, IconoEliminar } from '../../../components/Iconos'
 import styles from '../styles/ListaAutores.module.css'
 
 function ListaAutores({ autores, botones, variante = 'normal' }) {
@@ -11,14 +12,20 @@ function ListaAutores({ autores, botones, variante = 'normal' }) {
             {botones.map((boton, index) => {
               const etiqueta = typeof boton.texto === 'function' ? boton.texto(autor) : boton.texto
               const esAnadir = etiqueta === 'Añadir'
+              const esIcono = etiqueta === 'Editar' || etiqueta === 'Eliminar'
+              const claseBoton = etiqueta === 'Eliminar' ? styles.botonEliminar : esAnadir ? styles.botonPrimario : styles.boton
               return (
                 <button
                   key={index}
                   type="button"
-                  className={esAnadir ? styles.botonPrimario : styles.boton}
+                  className={esIcono ? `${claseBoton} ${styles.botonIcono}` : claseBoton}
                   onClick={() => boton.onClick(autor)}
+                  aria-label={esIcono ? etiqueta : undefined}
+                  title={esIcono ? etiqueta : undefined}
                 >
-                  {etiqueta}
+                  {etiqueta === 'Editar' ? <IconoEditar />
+                    : etiqueta === 'Eliminar' ? <IconoEliminar />
+                    : etiqueta}
                 </button>
               )
             })}

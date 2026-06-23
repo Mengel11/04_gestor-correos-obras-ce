@@ -1,4 +1,5 @@
 import FilaObra from './FilaObra'
+import styles from '../styles/TablaObras.module.css'
 
 function TablaObras({ obras, botones }) {
 
@@ -11,23 +12,23 @@ function TablaObras({ obras, botones }) {
     ))
     
     return (
-        <>
-            <table>
+        <div className={styles.contenedor}>
+            <table className={styles.tabla}>
                 <thead>
                     <tr>
-                        <th>Obra</th>
-                        <th>Estado</th>
-                        <th>Fecha de Alta</th>
-                        <th>Autores</th>
-                        <th>Revisores</th>
-                        <th>Porcentaje de Avance</th>
+                        <th className={styles.encabezadoCelda}>Obra</th>
+                        <th className={styles.encabezadoCelda}>Clasificación</th>
+                        <th className={styles.encabezadoCelda}>Fecha de Alta</th>
+                        <th className={styles.encabezadoCelda}>Autores</th>
+                        <th className={styles.encabezadoCelda}>Revisores</th>
+                        <th className={styles.encabezadoCelda}>Porcentaje de Avance</th>
                     </tr>
                 </thead>
                 <tbody>
                     {filasObra}
                 </tbody>
             </table>
-        </>
+        </div>
     )
 }
 
