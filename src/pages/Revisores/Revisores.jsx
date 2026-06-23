@@ -5,6 +5,7 @@ import { registrarRevisor, obtenerRevisores, eliminarRevisor, actualizarRevisor 
 import { validarEmail } from '../../utils/validaciones'
 import FormularioRevisor from './components/FormularioRevisor'
 import ListaRevisores from './components/ListaRevisores'
+import styles from './styles/Revisores.module.css'
 
 
 function Revisores() {
@@ -87,8 +88,13 @@ function Revisores() {
     
 
     return (
-        <>
-            <button onClick={() => setMostrarFormulario(true)}>Nuevo Revisor</button>
+        <div className={styles.pagina}>
+            <div className={styles.encabezado}>
+                <h1 className={styles.titulo}>Revisores</h1>
+                <button type="button" className={styles.botonNuevo} onClick={() => setMostrarFormulario(true)}>
+                    Nuevo Revisor
+                </button>
+            </div>
             {mostrarFormulario && (
                 <FormularioRevisor 
                     revisor={revisorFormulario}
@@ -106,9 +112,9 @@ function Revisores() {
                     ]}
                 />
             ): (
-                <p>No hay revisores registrados</p>
+                <p className={styles.vacio}>No hay revisores registrados</p>
             )}
-        </>
+        </div>
     )
 }
 

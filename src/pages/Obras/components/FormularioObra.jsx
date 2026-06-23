@@ -62,6 +62,7 @@ function FormularioObra({ obraAEditar, onGuardar, onCancelar }) {
             <>
               <ListaAutores 
                   autores={autoresDisponibles}
+                  variante="compacta"
                   botones={[
                       { texto: (autor) => (obraFormulario.autores.includes(autor.id) ? 'Quitar' : 'Añadir'), onClick: handleClickAutor }
                   ]} 

@@ -1,0 +1,50 @@
+.pagina {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.encabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.titulo {
+  margin: 0;
+  font-size: 1.75rem;
+  letter-spacing: -0.02em;
+}
+
+.botonNuevo {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--accent-border);
+  border-radius: 8px;
+  background: var(--accent);
+  color: var(--text-on-accent);
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.botonNuevo:hover {
+  background: var(--accent-hover);
+}
+
+.botonNuevo:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.vacio {
+  margin: 0;
+  padding: 2rem;
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  background: var(--bg-subtle);
+  color: var(--text);
+  text-align: center;
+}

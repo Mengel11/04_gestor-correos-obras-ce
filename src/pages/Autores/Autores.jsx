@@ -5,6 +5,7 @@ import { registrarAutor, obtenerAutores, eliminarAutor, actualizarAutor } from '
 import { validarEmail } from '../../utils/validaciones'
 import FormularioAutor from './components/FormularioAutor'
 import ListaAutores from './components/ListaAutores'
+import styles from './styles/Autores.module.css'
 
 
 function Autores() {
@@ -86,8 +87,13 @@ function Autores() {
     
 
     return (
-        <>
-            <button onClick={() => setMostrarFormulario(true)}>Nuevo Autor</button>
+        <div className={styles.pagina}>
+            <div className={styles.encabezado}>
+                <h1 className={styles.titulo}>Autores</h1>
+                <button type="button" className={styles.botonNuevo} onClick={() => setMostrarFormulario(true)}>
+                    Nuevo Autor
+                </button>
+            </div>
             {mostrarFormulario && (
                 <FormularioAutor 
                     autor={autorFormulario}
@@ -105,9 +111,9 @@ function Autores() {
                     ]}
                 />
             ): (
-                <p>No hay autores registrados</p>
+                <p className={styles.vacio}>No hay autores registrados</p>
             )}
-        </>
+        </div>
     )
 }
 

@@ -85,6 +85,7 @@ function AsignarRevisores({ obra, indiceEtapa, refrescarObra, onCancelarEdicion 
         <>
             <ListaRevisores 
                 revisores={revisores} 
+                variante="compacta"
                 botones={[
                     {texto: (revisor) => revisorEstaAsignado(revisor.id) ? 'Quitar' : 'Añadir', onClick: handleClickRevisor}
                 ]}

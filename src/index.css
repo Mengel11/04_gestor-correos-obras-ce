@@ -3,6 +3,10 @@
   --accent-hover: #d97300;
   --accent-bg: rgba(240, 130, 0, 0.12);
   --accent-border: rgba(240, 130, 0, 0.45);
+  --accent-revisor: #ca8a04;
+  --accent-revisor-hover: #a16207;
+  --accent-revisor-bg: rgba(202, 138, 4, 0.14);
+  --accent-revisor-border: rgba(202, 138, 4, 0.45);
   --text: #4b5563;
   --text-h: #1f2937;
   --bg: #ffffff;
@@ -40,6 +44,10 @@
     --accent-hover: #f08200;
     --accent-bg: rgba(245, 158, 66, 0.15);
     --accent-border: rgba(245, 158, 66, 0.5);
+    --accent-revisor: #eab308;
+    --accent-revisor-hover: #ca8a04;
+    --accent-revisor-bg: rgba(234, 179, 8, 0.15);
+    --accent-revisor-border: rgba(234, 179, 8, 0.45);
     --text: #d1d5db;
     --text-h: #f9fafb;
     --bg: #111827;

@@ -89,6 +89,7 @@ function Revision({ obra, indiceEtapa, refrescarObra, onCancelarEdicion }) {
         <>
             <ListaRevisores
                 revisores={revisores}
+                variante="compacta"
                 botones={[
                     { texto: (revisor) => revisionEstaCompletada(revisor.id) ? 'Marcar pendiente' : 'Marcar completada', onClick: handleClickRevisor }
                 ]}
