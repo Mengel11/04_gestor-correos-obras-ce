@@ -34,6 +34,14 @@ function Layout() {
                     >
                         Revisores
                     </NavLink>
+                    <NavLink
+                        to="/miembros-ce"
+                        className={({ isActive }) =>
+                            isActive ? `${styles.enlace} ${styles.enlaceActivo}` : styles.enlace
+                        }
+                    >
+                        Miembros CE
+                    </NavLink>
                 </nav>
             </header>
             <main>

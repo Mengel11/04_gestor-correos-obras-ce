@@ -1,0 +1,64 @@
+.pagina {
+  --accent-miembro: #9b2c2c;
+  --accent-miembro-hover: #7f1d1d;
+  --accent-miembro-bg: rgba(155, 44, 44, 0.12);
+  --accent-miembro-border: rgba(155, 44, 44, 0.45);
+
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.encabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.titulo {
+  margin: 0;
+  font-size: 1.75rem;
+  letter-spacing: -0.02em;
+}
+
+.botonNuevo {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--accent-miembro-border);
+  border-radius: 8px;
+  background: var(--accent-miembro);
+  color: var(--text-on-accent);
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.botonNuevo:hover {
+  background: var(--accent-miembro-hover);
+}
+
+.botonNuevo:focus-visible {
+  outline: 2px solid var(--accent-miembro);
+  outline-offset: 2px;
+}
+
+.vacio {
+  margin: 0;
+  padding: 2rem;
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  background: var(--bg-subtle);
+  color: var(--text);
+  text-align: center;
+}
+
+@media (prefers-color-scheme: dark) {
+  .pagina {
+    --accent-miembro: #c85555;
+    --accent-miembro-hover: #a84343;
+    --accent-miembro-bg: rgba(200, 85, 85, 0.15);
+    --accent-miembro-border: rgba(200, 85, 85, 0.5);
+  }
+}
