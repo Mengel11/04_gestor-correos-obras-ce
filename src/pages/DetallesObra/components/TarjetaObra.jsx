@@ -1,11 +1,15 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom';
 import { useRetroalimentacion } from '../../../context/Retroalimentacion'
 import { obtenerAutor } from '../../../services/autoresService';
 import { calcularPorcentajeAvance } from '../../../utils/obraUtils';
-import TarjetaAutor from '../../Autores/components/TarjetaAutor';
+import { IconoEditar } from '../../../components/Iconos';
 import GraficaDona from './GraficaDona';
-import FormularioObra from '../../Obras/components/FormularioObra';
+import styles from '../styles/TarjetaObra.module.css'
+
+function nombreCompleto(autor) {
+    return [autor.nombre, autor.apellidoPaterno, autor.apellidoMaterno]
+        .join(' ')
+}
 
 function TarjetaObra({ obra, onEditar }) {
     const [autoresObra, setAutoresObra] = useState([]);
@@ -26,20 +30,48 @@ function TarjetaObra({ obra, onEditar }) {
     }, [])
 
     return (
-        <>
-            <p>Titulo: {obra.titulo}</p>
-            <p>Clasificación: {obra.clasificacion}</p>
-            <div>Autores: 
-                <div>
-                    {autoresObra.map(autor => (
-                        <TarjetaAutor key={autor.id} autor={autor} />
-                    ))}
+        <article className={styles.tarjeta}>
+            <div className={styles.zonaInfo}>
+                <div className={styles.bloqueDatos}>
+                    <div className={styles.fila}>
+                        <span className={styles.etiqueta}>Título:</span>
+                        <span className={styles.valorTitulo}>{obra.titulo}</span>
+                    </div>
+                    <div className={styles.fila}>
+                        <span className={styles.etiqueta}>Clasificación:</span>
+                        <span className={styles.clasificacion}>{obra.clasificacion}</span>
+                    </div>
+                    <div className={styles.filaAutores}>
+                        <span className={styles.etiqueta}>Autores:</span>
+                        <div className={styles.chipsAutores}>
+                            {autoresObra.map(autor => (
+                                <span key={autor.id} className={styles.chipAutor}>
+                                    {nombreCompleto(autor)}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
                 </div>
+                <button
+                    type="button"
+                    className={styles.botonModificar}
+                    onClick={onEditar}
+                    aria-label="Modificar obra"
+                    title="Modificar"
+                >
+                    <IconoEditar />
+                </button>
             </div>
-            <p>Estado: {obra.estado}</p>
-            <GraficaDona porcentaje={calcularPorcentajeAvance(obra.estado)}/>
-            <button onClick={onEditar}>Modificar</button>
-        </>
+
+            <div className={styles.zonaEstado}>
+                <span className={styles.etiquetaEstado}>Estado:</span>
+                <strong className={styles.valorEstado}>{obra.estado}</strong>
+            </div>
+
+            <div className={styles.zonaDona}>
+                <GraficaDona porcentaje={calcularPorcentajeAvance(obra.estado)} compacta />
+            </div>
+        </article>
     )
 }
 

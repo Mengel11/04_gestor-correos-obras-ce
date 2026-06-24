@@ -1,0 +1,68 @@
+.contenedor {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dona {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 8.5rem;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background:
+    conic-gradient(
+      var(--accent) calc(var(--porcentaje) * 1%),
+      var(--bg-subtle) 0
+    );
+  box-shadow: inset 0 0 0 1px var(--border);
+}
+
+.dona::before {
+  content: '';
+  position: absolute;
+  inset: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--bg);
+  box-shadow: var(--shadow);
+}
+
+.centro {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.15;
+  color: var(--text);
+}
+
+.centro strong {
+  color: var(--text-h);
+  font-family: var(--heading);
+  font-size: 1.45rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.centro span {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.compacta .dona {
+  width: 5.5rem;
+}
+
+.compacta .dona::before {
+  inset: 0.65rem;
+  box-shadow: none;
+}
+
+.compacta .centro strong {
+  font-size: 0.95rem;
+}

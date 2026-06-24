@@ -11,6 +11,7 @@ import AsignarRevisores from './components/AsignarRevisores';
 import RevisionesPlazos from './components/RevisionesPlazos';
 import Revision from './components/Revision';
 import DecisionFinal from './components/DecisionFinal';
+import styles from './styles/DetallesObra.module.css'
 
 const ETAPAS_OBRA = [
     { nombre: 'Verificación de la clasificación', componente: VerificacionObra },
@@ -82,34 +83,45 @@ function DetallesObra() {
                 />
             )}
             {obra && (
-                <>
+                <div className={styles.pagina}>
                     <TarjetaObra obra={obra} onEditar={() => setEditarObra(true)} />
                     {ETAPAS_OBRA.map((etapa, index) => {
                         const EtapaComponente = etapa.componente
                         const enEdicion = etapasEnEdicion[index]
                         const puedeEditar = index === 0 || etapasCompletadas.filter((_,i) => i < index).every(valor => valor)
+                        const etapaCompletada = etapasCompletadas[index]
+                        const claseEtapa = [
+                            styles.etapa,
+                            etapaCompletada ? styles.etapaCompletada : puedeEditar ? styles.etapaDisponible : styles.etapaBloqueada,
+                            enEdicion ? styles.etapaEnEdicion : '',
+                        ].join(' ')
 
                         return (
-                            <div key={etapa.nombre} className='etapa'>
-                                <h2>{etapa.nombre}</h2>
+                            <section key={etapa.nombre} className={claseEtapa}>
+                                <h2 className={styles.tituloEtapa}>{etapa.nombre}</h2>
                                 {( puedeEditar && enEdicion ) ? (
-                                    <EtapaComponente
-                                        obra={obra}
-                                        indiceEtapa={index}
-                                        refrescarObra={cargarObra}
-                                        onCancelarEdicion={() => cancelarEdicionEtapa(index)}
-                                    />
+                                    <div className={styles.contenidoEtapa}>
+                                        <EtapaComponente
+                                            obra={obra}
+                                            indiceEtapa={index}
+                                            refrescarObra={cargarObra}
+                                            onCancelarEdicion={() => cancelarEdicionEtapa(index)}
+                                        />
+                                    </div>
                                 ) : (
-                                    <button 
-                                        disabled={!puedeEditar} 
-                                        onClick={() => activarEdicionEtapa(index)}
-                                        type="button"
-                                    >Editar</button>
+                                    <div className={styles.pieEtapa}>
+                                        <button
+                                            className={styles.botonEtapa}
+                                            disabled={!puedeEditar}
+                                            onClick={() => activarEdicionEtapa(index)}
+                                            type="button"
+                                        >Editar</button>
+                                    </div>
                                 )}
-                            </div>
+                            </section>
                         )
                     })}
-                </>
+                </div>
             )}
         </>
     )

@@ -30,7 +30,17 @@
   height: 2.5rem;
 }
 
+.detallesObra .avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
 .compacta .avatar svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.detallesObra .avatar svg {
   width: 1.25rem;
   height: 1.25rem;
 }
@@ -56,6 +66,10 @@
   font-size: 0.85rem;
 }
 
+.detallesObra .nombre {
+  font-size: 0.85rem;
+}
+
 .correo {
   margin: 0;
   color: var(--text);
@@ -67,5 +81,9 @@
 }
 
 .compacta .correo {
+  font-size: 0.75rem;
+}
+
+.detallesObra .correo {
   font-size: 0.75rem;
 }

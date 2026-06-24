@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useRetroalimentacion } from '../../../context/Retroalimentacion';
 import { useConfirmar } from '../../../context/Confirmar'
 import { obtenerRevisores } from '../../../services/revisoresService';
@@ -7,6 +8,7 @@ import { marcarEtapaCompletada } from '../../../utils/obraUtils';
 import ListaRevisores from '../../Revisores/components/ListaRevisores';
 import GraficaDona from './GraficaDona';
 import Temporizador from './Temporizador';
+import styles from '../styles/AsignarRevisores.module.css'
 
 function AsignarRevisores({ obra, indiceEtapa, refrescarObra, onCancelarEdicion }) {
     const [revisores, setRevisores] = useState([])
@@ -24,7 +26,9 @@ function AsignarRevisores({ obra, indiceEtapa, refrescarObra, onCancelarEdicion 
     }
     useEffect(() => { cargarRevisores() }, [])
 
-    const porcentajeRevisores = Math.round( obra.revisoresAsignados.length / obra.revisoresMinimos * 100 )
+    const revisoresUnidos = obra.revisoresAsignados.length
+    const revisoresPlaneados = obra.revisoresMinimos
+    const porcentajeRevisores = revisoresPlaneados ? Math.round(revisoresUnidos / revisoresPlaneados * 100) : 0
     const etapaCompletada = obra.etapasCompletadas[indiceEtapa]
     const revisorEstaAsignado = (revisorId) => obra.revisoresAsignados.some(revisorAsignado => revisorAsignado.id === revisorId)
 
@@ -82,23 +86,48 @@ function AsignarRevisores({ obra, indiceEtapa, refrescarObra, onCancelarEdicion 
     }
 
     return (
-        <>
-            <ListaRevisores 
-                revisores={revisores} 
-                variante="compacta"
-                botones={[
-                    {texto: (revisor) => revisorEstaAsignado(revisor.id) ? 'Quitar' : 'Añadir', onClick: handleClickRevisor}
-                ]}
-            />
-            <GraficaDona porcentaje={porcentajeRevisores}/>
-            <Temporizador fechaLimite={obra.fechaLimiteRevisores}/>
-            {obra.revisoresAsignados.length > 0 && !etapaCompletada && (
-                <button onClick={handleClickSiguiente}>
-                    Comenzar la siguiente etapa
-                </button>
-            )}
-            <button onClick={onCancelarEdicion}>Cancelar</button>
-        </>
+        <div className={styles.panel}>
+            <div className={styles.resumen}>
+                <section className={styles.tarjetaProgreso} aria-label="Progreso de revisores unidos">
+                    <GraficaDona porcentaje={porcentajeRevisores} compacta />
+                    <div className={styles.detalleProgreso}>
+                        <h3>Revisores unidos</h3>
+                        <p>
+                            {revisoresUnidos} de {revisoresPlaneados} revisores planeados se han unido a la obra.
+                        </p>
+                    </div>
+                </section>
+                <section className={styles.tarjetaReloj} aria-label="Tiempo restante para asignar revisores">
+                    <Temporizador fechaLimite={obra.fechaLimiteRevisores} />
+                </section>
+            </div>
+            <div className={styles.lista}>
+                <div className={styles.encabezadoLista}>
+                    <h3>Revisores disponibles</h3>
+                    <span>{revisores.length} registrados</span>
+                </div>
+                <div className={styles.listaScroll}>
+                    <ListaRevisores
+                        revisores={revisores}
+                        variante="detallesObra"
+                        botones={[
+                            {texto: (revisor) => revisorEstaAsignado(revisor.id) ? 'Quitar' : 'Añadir', onClick: handleClickRevisor}
+                        ]}
+                    />
+                </div>
+                <Link to="/revisores" className={styles.enlaceRegistrar}>
+                    Registrar nuevo revisor
+                </Link>
+            </div>
+            <div className={styles.acciones}>
+                {obra.revisoresAsignados.length > 0 && !etapaCompletada && (
+                    <button className={styles.botonPrimario} onClick={handleClickSiguiente}>
+                        Comenzar la siguiente etapa
+                    </button>
+                )}
+                <button onClick={onCancelarEdicion}>Cancelar</button>
+            </div>
+        </div>
     )
 }
 

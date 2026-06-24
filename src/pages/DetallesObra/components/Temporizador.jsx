@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import styles from '../styles/DetallesObra.module.css'
 
 function Temporizador({ fechaLimite }) {
     const [tiempo, setTiempo] = useState({dias: 0, horas: 0, minutos: 0, segundos: 0})
@@ -31,11 +32,13 @@ function Temporizador({ fechaLimite }) {
     const diferencia = fechaLimite.toDate().getTime() - new Date().getTime()
 
     return (
-        <>
-            <div>
-                {diferencia < 0 ? '-' : ''} {tiempo.dias} {tiempo.horas}:{tiempo.minutos}:{tiempo.segundos}
-            </div>
-        </>
+        <div className={styles.temporizador}>
+            <span className={styles.temporizadorTitulo}>
+                {diferencia < 0 ? 'Tiempo vencido' : 'Tiempo restante'}
+            </span>
+            <strong>{diferencia < 0 ? '-' : ''}{tiempo.dias} días</strong>
+            <strong>{tiempo.horas}:{tiempo.minutos}:{tiempo.segundos}</strong>
+        </div>
     )
 }
 

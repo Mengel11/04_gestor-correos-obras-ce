@@ -3,6 +3,7 @@ import { useRetroalimentacion } from '../../../context/Retroalimentacion';
 import { actualizarObra } from '../../../services/obrasService';
 import { fechaInputAFechaLimite } from '../../../utils/fechas';
 import { marcarEtapaCompletada } from '../../../utils/obraUtils';
+import styles from '../styles/DetallesObra.module.css'
 
 function RevisionesPlazos({ obra, indiceEtapa, refrescarObra, onCancelarEdicion }) {
     const [camposFormulario, setCamposFormulario] = useState({
@@ -63,33 +64,32 @@ function RevisionesPlazos({ obra, indiceEtapa, refrescarObra, onCancelarEdicion 
     }
 
     return (
-        <div>
-            <form onSubmit={handleClickGuardar}>
-                <fieldset>
-                    <legend>Establecer revisiones y plazos</legend>
-                    <label>
-                        Número mínimo de revisiones:
-                        <input
-                            type="number"
-                            name="revisionesMinimas"
-                            value={camposFormulario.revisionesMinimas}
-                            onChange={handleChangeFormulario}
-                        />
-                    </label>
-                    <label>
-                        Fecha límite:
-                        <input
-                            type="date"
-                            name="fechaLimiteRevisiones"
-                            value={camposFormulario.fechaLimiteRevisiones}
-                            onChange={handleChangeFormulario}
-                        />
-                    </label>
-                </fieldset>
-                <button type="button" onClick={onCancelarEdicion}>Cancelar</button>
+        <form className={styles.formularioFase} onSubmit={handleClickGuardar}>
+            <fieldset className={styles.panelCampos}>
+                <label>
+                    Número mínimo de revisiones:
+                    <input
+                        type="number"
+                        name="revisionesMinimas"
+                        value={camposFormulario.revisionesMinimas}
+                        onChange={handleChangeFormulario}
+                    />
+                </label>
+                <label>
+                    Fecha límite para recibir revisiones:
+                    <input
+                        type="date"
+                        name="fechaLimiteRevisiones"
+                        value={camposFormulario.fechaLimiteRevisiones}
+                        onChange={handleChangeFormulario}
+                    />
+                </label>
+            </fieldset>
+            <div className={styles.accionesFormulario}>
                 <button type="submit">Guardar</button>
-            </form>
-        </div>
+                <button type="button" onClick={onCancelarEdicion}>Cancelar</button>
+            </div>
+        </form>
     )
 }
 

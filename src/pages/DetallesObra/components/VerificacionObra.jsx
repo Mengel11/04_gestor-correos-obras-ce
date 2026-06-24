@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { useRetroalimentacion } from '../../../context/Retroalimentacion';
 import { actualizarObra } from '../../../services/obrasService';
 import { marcarEtapaCompletada } from '../../../utils/obraUtils';
+import styles from '../styles/DetallesObra.module.css'
 
 function VerificacionObra({ obra, indiceEtapa, refrescarObra, onCancelarEdicion, }) {
     const [clasificacionApta, setClasificacionApta] = useState(obra.clasificacionApta);
@@ -48,12 +49,10 @@ function VerificacionObra({ obra, indiceEtapa, refrescarObra, onCancelarEdicion,
     }
 
     return (
-        <div>
-            <form onSubmit={handleClickGuardar}>
-                <fieldset>
-                    <legend>
-                        ¿La clasificación que asigno el autor es correcta?
-                    </legend>
+        <form className={styles.formularioFase} onSubmit={handleClickGuardar}>
+            <fieldset className={styles.panelPregunta} aria-labelledby="pregunta-clasificacion">
+                <p id="pregunta-clasificacion" className={styles.textoPregunta}>¿La clasificación que asigno el autor es correcta?</p>
+                <div className={styles.opcionesLinea}>
                     <label>
                         <input type="radio" name="clasificacionApta" value="si" checked={clasificacionApta === true} onChange={handleChangeFormulario} />
                         Sí
@@ -62,11 +61,13 @@ function VerificacionObra({ obra, indiceEtapa, refrescarObra, onCancelarEdicion,
                         <input type="radio" name="clasificacionApta" value="no" checked={clasificacionApta === false} onChange={handleChangeFormulario} />
                         No
                     </label>
-                </fieldset>
-                <button type='button' onClick={onCancelarEdicion}>Cancelar</button>
+                </div>
+            </fieldset>
+            <div className={styles.accionesFormulario}>
                 <button type='submit'>Guardar</button>
-            </form>
-        </div>
+                <button type='button' onClick={onCancelarEdicion}>Cancelar</button>
+            </div>
+        </form>
     )
 
 }

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useRetroalimentacion } from '../../../context/Retroalimentacion';
 import { actualizarObra } from '../../../services/obrasService';
 import { marcarEtapaCompletada } from '../../../utils/obraUtils';
+import styles from '../styles/DetallesObra.module.css'
 
 function DecisionFinal({ obra, indiceEtapa, refrescarObra, onCancelarEdicion }) {
     const [decisionFinal, setDecisionFinal] = useState(obra.decisionFinal ?? '');
@@ -43,30 +44,27 @@ function DecisionFinal({ obra, indiceEtapa, refrescarObra, onCancelarEdicion }) 
     }
 
     return (
-        <div>
-            <form onSubmit={handleClickGuardar}>
-                <fieldset>
-                    <legend>
-                        Toma de decisión
-                    </legend>
-                    <label>
-                        Decisión final:
-                        <select
-                            name="decisionFinal"
-                            value={decisionFinal}
-                            onChange={handleChangeFormulario}
-                        >
-                            <option value="" disabled>Seleccione una opción</option>
-                            <option value="Aprobar obra">Aprobar obra</option>
-                            <option value="Rechazar obra">Rechazar obra</option>
-                            <option value="Solicitar modificaciones">Solicitar modificaciones</option>
-                        </select>
-                    </label>
-                </fieldset>
-                <button type="button" onClick={onCancelarEdicion}>Cancelar</button>
+        <form className={styles.formularioFase} onSubmit={handleClickGuardar}>
+            <fieldset className={styles.panelCampos}>
+                <label>
+                    Decisión final:
+                    <select
+                        name="decisionFinal"
+                        value={decisionFinal}
+                        onChange={handleChangeFormulario}
+                    >
+                        <option value="" disabled>Seleccione una opción</option>
+                        <option value="Aprobar obra">Aprobar obra</option>
+                        <option value="Rechazar obra">Rechazar obra</option>
+                        <option value="Solicitar modificaciones">Solicitar modificaciones</option>
+                    </select>
+                </label>
+            </fieldset>
+            <div className={styles.accionesFormulario}>
                 <button type="submit">Guardar</button>
-            </form>
-        </div>
+                <button type="button" onClick={onCancelarEdicion}>Cancelar</button>
+            </div>
+        </form>
     )
 }
 

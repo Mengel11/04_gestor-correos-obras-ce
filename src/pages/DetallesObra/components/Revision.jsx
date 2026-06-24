@@ -7,6 +7,7 @@ import { marcarEtapaCompletada } from '../../../utils/obraUtils';
 import ListaRevisores from '../../Revisores/components/ListaRevisores';
 import GraficaDona from './GraficaDona';
 import Temporizador from './Temporizador';
+import styles from '../styles/Revision.module.css'
 
 function Revision({ obra, indiceEtapa, refrescarObra, onCancelarEdicion }) {
     const [revisores, setRevisores] = useState([])
@@ -26,8 +27,9 @@ function Revision({ obra, indiceEtapa, refrescarObra, onCancelarEdicion }) {
 
     useEffect(() => { cargarRevisores() }, [obra.revisoresAsignados])
 
-    const numeroRevisiones = obra.revisoresAsignados.filter(revisor => revisor.revisionCompletada).length
-    const porcentajeRevisiones = Math.round(numeroRevisiones / obra.revisionesMinimas * 100)
+    const revisionesCompletadas = obra.revisoresAsignados.filter(revisor => revisor.revisionCompletada).length
+    const revisionesMinimas = obra.revisionesMinimas
+    const porcentajeRevisiones = revisionesMinimas ? Math.round(revisionesCompletadas / revisionesMinimas * 100) : 0
     const etapaCompletada = obra.etapasCompletadas[indiceEtapa]
     const revisionEstaCompletada = (revisorId) => obra.revisoresAsignados.find(revisorAsignado => revisorAsignado.id === revisorId)?.revisionCompletada
 
@@ -51,8 +53,8 @@ function Revision({ obra, indiceEtapa, refrescarObra, onCancelarEdicion }) {
                 : revisorAsignado
         )
 
-        const numeroRevisiones = revisoresAsignados.filter(revisor => revisor.revisionCompletada).length
-        const seVuelveEtapaCompletada = numeroRevisiones >= obra.revisionesMinimas
+        const nuevasRevisionesCompletadas = revisoresAsignados.filter(revisor => revisor.revisionCompletada).length
+        const seVuelveEtapaCompletada = nuevasRevisionesCompletadas >= obra.revisionesMinimas
         const estado = seVuelveEtapaCompletada ? 'Toma de decisión final' : 'Revisión en proceso'
 
         try {
@@ -86,23 +88,45 @@ function Revision({ obra, indiceEtapa, refrescarObra, onCancelarEdicion }) {
     }
 
     return (
-        <>
-            <ListaRevisores
-                revisores={revisores}
-                variante="compacta"
-                botones={[
-                    { texto: (revisor) => revisionEstaCompletada(revisor.id) ? 'Marcar pendiente' : 'Marcar completada', onClick: handleClickRevisor }
-                ]}
-            />
-            <GraficaDona porcentaje={porcentajeRevisiones} />
-            <Temporizador fechaLimite={obra.fechaLimiteRevisiones} />
-            {numeroRevisiones > 0 && !etapaCompletada && (
-                <button onClick={handleClickSiguiente}>
-                    Comenzar a tomar la decisión final
-                </button>
-            )}
-            <button onClick={onCancelarEdicion}>Cancelar</button>
-        </>
+        <div className={styles.panel}>
+            <div className={styles.resumen}>
+                <section className={styles.tarjetaProgreso} aria-label="Progreso de revisiones completadas">
+                    <GraficaDona porcentaje={porcentajeRevisiones} compacta />
+                    <div className={styles.detalleProgreso}>
+                        <h3>Revisiones completadas</h3>
+                        <p>
+                            {revisionesCompletadas} de {revisionesMinimas} revisiones mínimas se han completado para esta obra.
+                        </p>
+                    </div>
+                </section>
+                <section className={styles.tarjetaReloj} aria-label="Tiempo restante para completar revisiones">
+                    <Temporizador fechaLimite={obra.fechaLimiteRevisiones} />
+                </section>
+            </div>
+            <div className={styles.lista}>
+                <div className={styles.encabezadoLista}>
+                    <h3>Revisores asignados</h3>
+                    <span>{revisores.length} asignados</span>
+                </div>
+                <div className={styles.listaScroll}>
+                    <ListaRevisores
+                        revisores={revisores}
+                        variante="detallesObra"
+                        botones={[
+                            { texto: (revisor) => revisionEstaCompletada(revisor.id) ? 'Marcar pendiente' : 'Marcar completada', onClick: handleClickRevisor }
+                        ]}
+                    />
+                </div>
+            </div>
+            <div className={styles.acciones}>
+                {revisionesCompletadas > 0 && !etapaCompletada && (
+                    <button className={styles.botonPrimario} onClick={handleClickSiguiente}>
+                        Comenzar decisión final
+                    </button>
+                )}
+                <button onClick={onCancelarEdicion}>Cancelar</button>
+            </div>
+        </div>
     )
 }
 

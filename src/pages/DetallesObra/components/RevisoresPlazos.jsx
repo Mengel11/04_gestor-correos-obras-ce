@@ -3,6 +3,7 @@ import { useRetroalimentacion } from '../../../context/Retroalimentacion';
 import { actualizarObra } from '../../../services/obrasService';
 import { fechaInputAFechaLimite } from '../../../utils/fechas';
 import { marcarEtapaCompletada } from '../../../utils/obraUtils';
+import styles from '../styles/DetallesObra.module.css'
 
 function RevisoresPlazos({ obra, indiceEtapa, refrescarObra, onCancelarEdicion }) {
     const [camposFormulario, setCamposFormulario] = useState({
@@ -57,33 +58,32 @@ function RevisoresPlazos({ obra, indiceEtapa, refrescarObra, onCancelarEdicion }
     }
 
     return (
-        <div>
-            <form onSubmit={handleClickGuardar}>
-                <fieldset>
-                    <legend>Establecer revisores y plazos</legend>
-                    <label>
-                        Número mínimo de revisores:
-                        <input
-                            type="number"
-                            name="revisoresMinimos"
-                            value={camposFormulario.revisoresMinimos}
-                            onChange={handleChangeFormulario}
-                        />
-                    </label>
-                    <label>
-                        Fecha límite:
-                        <input
-                            type="date"
-                            name="fechaLimiteRevisores"
-                            value={camposFormulario.fechaLimiteRevisores}
-                            onChange={handleChangeFormulario}
-                        />
-                    </label>
-                </fieldset>
-                <button type="button" onClick={onCancelarEdicion}>Cancelar</button>
+        <form className={styles.formularioFase} onSubmit={handleClickGuardar}>
+            <fieldset className={styles.panelCampos}>
+                <label>
+                    Número mínimo de revisores:
+                    <input
+                        type="number"
+                        name="revisoresMinimos"
+                        value={camposFormulario.revisoresMinimos}
+                        onChange={handleChangeFormulario}
+                    />
+                </label>
+                <label>
+                    Fecha límite para asignar revisores:
+                    <input
+                        type="date"
+                        name="fechaLimiteRevisores"
+                        value={camposFormulario.fechaLimiteRevisores}
+                        onChange={handleChangeFormulario}
+                    />
+                </label>
+            </fieldset>
+            <div className={styles.accionesFormulario}>
                 <button type="submit">Guardar</button>
-            </form>
-        </div>
+                <button type="button" onClick={onCancelarEdicion}>Cancelar</button>
+            </div>
+        </form>
     )
 }
 
