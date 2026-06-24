@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { useRetroalimentacion } from '../../context/Retroalimentacion';
 import { obtenerObra, actualizarObra } from '../../services/obrasService';
@@ -26,6 +26,11 @@ function DetallesObra() {
     const [obra, setObra] = useState(null);
     const [editarObra, setEditarObra] = useState(false);
     const [etapasEnEdicion, setEtapasEnEdicion] = useState(Array(ETAPAS_OBRA.length).fill(false));
+    const [transicionEtapa, setTransicionEtapa] = useState(null);
+    const [botonEnPulso, setBotonEnPulso] = useState(null);
+    const botonesEtapaRef = useRef([]);
+    const etapasCompletadasPrevRef = useRef(null);
+    const transicionTimeoutRef = useRef(null);
     const mostrarMensaje = useRetroalimentacion();
     const { obraId } = useParams();
 
@@ -66,12 +71,70 @@ function DetallesObra() {
     }
 
     const activarEdicionEtapa = (index) => {
+        if (botonEnPulso === index) {
+            setBotonEnPulso(null)
+        }
         setEtapasEnEdicion(prev => prev.map((valor, i) => i === index ? true : valor))
     }
 
     const cancelarEdicionEtapa = (index) => {
         setEtapasEnEdicion(prev => prev.map((valor, i) => i === index ? false : valor))
     }
+
+    useEffect(() => {
+        if (!obra) return
+
+        const actuales = obtenerEtapasCompletadas(obra)
+        const previas = etapasCompletadasPrevRef.current
+        etapasCompletadasPrevRef.current = actuales
+
+        if (previas === null) return
+
+        const indiceCompletado = actuales.findIndex((valor, i) => valor && !previas[i])
+        if (indiceCompletado === -1) return
+
+        const siguienteIndice = indiceCompletado + 1
+        if (siguienteIndice >= ETAPAS_OBRA.length) return
+
+        if (transicionTimeoutRef.current) {
+            window.clearTimeout(transicionTimeoutRef.current)
+        }
+
+        const preferReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        const tiempoCierre = preferReducedMotion ? 0 : 550
+        const tiempoPalomita = preferReducedMotion ? 0 : 750
+
+        setTransicionEtapa({ indiceCompletado, siguienteIndice, fase: 'cerrando' })
+
+        transicionTimeoutRef.current = window.setTimeout(() => {
+            cancelarEdicionEtapa(indiceCompletado)
+            setTransicionEtapa({ indiceCompletado, siguienteIndice, fase: 'palomita' })
+
+            transicionTimeoutRef.current = window.setTimeout(() => {
+                setBotonEnPulso(siguienteIndice)
+                setTransicionEtapa(null)
+
+                requestAnimationFrame(() => {
+                    const boton = botonesEtapaRef.current[siguienteIndice]
+                    if (boton) {
+                        boton.scrollIntoView({
+                            behavior: preferReducedMotion ? 'instant' : 'smooth',
+                            block: 'center',
+                        })
+                        boton.focus({ preventScroll: true })
+                    }
+                })
+            }, tiempoPalomita)
+        }, tiempoCierre)
+    }, [obra?.etapasCompletadas])
+
+    useEffect(() => {
+        return () => {
+            if (transicionTimeoutRef.current) {
+                window.clearTimeout(transicionTimeoutRef.current)
+            }
+        }
+    }, [])
 
     return (
         <>  
@@ -94,6 +157,8 @@ function DetallesObra() {
                             styles.etapa,
                             etapaCompletada ? styles.etapaCompletada : puedeEditar ? styles.etapaDisponible : styles.etapaBloqueada,
                             enEdicion ? styles.etapaEnEdicion : '',
+                            transicionEtapa?.indiceCompletado === index && transicionEtapa.fase === 'cerrando' ? styles.etapaCerrando : '',
+                            transicionEtapa?.indiceCompletado === index && transicionEtapa.fase === 'palomita' ? styles.etapaPalomitaLenta : '',
                         ].join(' ')
 
                         return (
@@ -111,7 +176,11 @@ function DetallesObra() {
                                 ) : (
                                     <div className={styles.pieEtapa}>
                                         <button
-                                            className={styles.botonEtapa}
+                                            ref={(el) => { botonesEtapaRef.current[index] = el }}
+                                            className={[
+                                                styles.botonEtapa,
+                                                botonEnPulso === index ? styles.botonPulso : '',
+                                            ].join(' ')}
                                             disabled={!puedeEditar}
                                             onClick={() => activarEdicionEtapa(index)}
                                             type="button"

@@ -16,6 +16,7 @@
   border-radius: 14px;
   background: var(--bg);
   box-shadow: var(--shadow);
+  transition: border-color 0.35s ease, border-left-color 0.35s ease, background 0.35s ease, box-shadow 0.35s ease;
 }
 
 .etapaCompletada {
@@ -41,6 +42,10 @@
   line-height: 1;
 }
 
+.etapaPalomitaLenta:not(.etapaEnEdicion)::after {
+  animation: mostrarPalomitaEtapa 0.75s ease-out both;
+}
+
 .etapaDisponible {
   border-left-color: var(--accent);
 }
@@ -61,6 +66,11 @@
   border-left-color: var(--success);
 }
 
+.etapaCerrando .contenidoEtapa {
+  overflow: hidden;
+  animation: cerrarContenidoEtapa 0.55s ease forwards;
+}
+
 .tituloEtapa {
   margin: 0;
   color: var(--text-h);
@@ -77,6 +87,7 @@
 }
 
 .botonEtapa {
+  position: relative;
   padding: 0.45rem 0.9rem;
   border: 1px solid var(--border);
   border-radius: 8px;
@@ -102,6 +113,61 @@
 .botonEtapa:disabled {
   cursor: not-allowed;
   opacity: 0.55;
+}
+
+.botonPulso {
+  border-color: var(--accent-border);
+  color: var(--text-h);
+  box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 42%, transparent);
+  animation: pulsoBotonEtapa 1.15s ease-out infinite;
+}
+
+@keyframes pulsoBotonEtapa {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 45%, transparent);
+  }
+
+  70% {
+    box-shadow: 0 0 0 0.55rem color-mix(in srgb, var(--accent) 0%, transparent);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 0%, transparent);
+  }
+}
+
+@keyframes cerrarContenidoEtapa {
+  from {
+    max-height: 36rem;
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  to {
+    max-height: 0;
+    opacity: 0;
+    transform: translateY(-0.35rem);
+    margin-top: 0;
+    padding-top: 0;
+    border-top-color: transparent;
+  }
+}
+
+@keyframes mostrarPalomitaEtapa {
+  from {
+    opacity: 0;
+    transform: scale(0.65);
+  }
+
+  65% {
+    opacity: 1;
+    transform: scale(1.12);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .contenidoEtapa {
@@ -311,5 +377,20 @@
 
   .accionesFormulario button {
     flex: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .etapa,
+  .botonEtapa,
+  .etapaCerrando .contenidoEtapa,
+  .etapaPalomitaLenta:not(.etapaEnEdicion)::after,
+  .botonPulso {
+    animation: none;
+    transition: none;
+  }
+
+  .botonPulso {
+    box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--accent) 20%, transparent);
   }
 }

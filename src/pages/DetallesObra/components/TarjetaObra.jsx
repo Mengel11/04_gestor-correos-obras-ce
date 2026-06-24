@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { useRetroalimentacion } from '../../../context/Retroalimentacion'
 import { obtenerAutor } from '../../../services/autoresService';
 import { calcularPorcentajeAvance } from '../../../utils/obraUtils';
@@ -35,7 +36,9 @@ function TarjetaObra({ obra, onEditar }) {
                 <div className={styles.bloqueDatos}>
                     <div className={styles.fila}>
                         <span className={styles.etiqueta}>Título:</span>
-                        <span className={styles.valorTitulo}>{obra.titulo}</span>
+                        <span className={styles.valorTitulo}>
+                            <Link to="/" className={styles.enlaceTitulo}>{obra.titulo}</Link>
+                        </span>
                     </div>
                     <div className={styles.fila}>
                         <span className={styles.etiqueta}>Clasificación:</span>
