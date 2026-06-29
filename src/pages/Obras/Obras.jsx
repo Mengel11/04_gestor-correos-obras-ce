@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useRetroalimentacion } from '../../context/Retroalimentacion'
 import { useConfirmar } from '../../context/Confirmar'
 import { obtenerObras, registrarObra, actualizarObra, eliminarObra } from '../../services/obrasService'
+import { aplicarEfectosCambioClasificacion } from '../../utils/obraUtils'
 import FormularioObra from './components/FormularioObra'
 import TablaObras from './components/TablaObras'
 import styles from './styles/Obras.module.css'
@@ -41,7 +42,11 @@ function Obras() {
     // Si la validación es exitosa entonces guardas la obra, reseteas el formulario y muestras un mensaje de éxito.
     try {
       if (obraFormulario.id) {
-        await actualizarObra(obraFormulario.id, obraFormulario)
+        const obraOriginal = obras.find(obra => obra.id === obraFormulario.id)
+        await actualizarObra(obraFormulario.id, {
+          ...obraFormulario,
+          ...aplicarEfectosCambioClasificacion(obraOriginal, obraFormulario.clasificacion),
+        })
       } else {
         await registrarObra(obraFormulario)
       }

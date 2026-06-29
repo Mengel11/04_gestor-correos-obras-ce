@@ -16,6 +16,18 @@ export const marcarEtapaCompletada = (etapasCompletadas, indice, completada) => 
     })
 }
 
+export const aplicarEfectosCambioClasificacion = (obra, clasificacionNueva) => {
+    if (!obra || obra.clasificacion === clasificacionNueva) {
+        return {}
+    }
+
+    return {
+        clasificacionApta: null,
+        estado: 'Verificación de la clasificación',
+        etapasCompletadas: marcarEtapaCompletada(obra.etapasCompletadas, 0, false),
+    }
+}
+
 export const calcularPorcentajeAvance = (estado) => {
     let valor = null
     switch (estado) {

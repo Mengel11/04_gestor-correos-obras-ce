@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { useRetroalimentacion } from '../../context/Retroalimentacion';
 import { obtenerObra, actualizarObra } from '../../services/obrasService';
-import { obtenerEtapasCompletadas } from '../../utils/obraUtils';
+import { obtenerEtapasCompletadas, aplicarEfectosCambioClasificacion } from '../../utils/obraUtils';
 import TarjetaObra from './components/TarjetaObra';
 import FormularioObra from '../Obras/components/FormularioObra';
 import VerificacionObra from './components/VerificacionObra';
@@ -61,7 +61,16 @@ function DetallesObra() {
         }
 
         try {
-            await actualizarObra(obraFormulario.id, obraFormulario)
+            const clasificacionCambio = obra.clasificacion !== obraFormulario.clasificacion
+            const obraActualizada = {
+                ...obraFormulario,
+                ...aplicarEfectosCambioClasificacion(obra, obraFormulario.clasificacion),
+            }
+
+            await actualizarObra(obraFormulario.id, obraActualizada)
+            if (clasificacionCambio) {
+                setEtapasEnEdicion(Array(ETAPAS_OBRA.length).fill(false))
+            }
             cargarObra()
             handleCancelarFormulario()
             mostrarMensaje({tipo: 'Exito', texto: 'Obra guardada exitosamente'})
