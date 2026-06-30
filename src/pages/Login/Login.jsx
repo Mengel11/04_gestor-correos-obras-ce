@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
-import { IconoOjo, IconoOjoOculto } from '../../components/Iconos'
 import { useAuth } from '../../context/Auth'
 import styles from './Login.module.css'
 
@@ -9,7 +8,6 @@ const CREDENCIALES_INICIALES = { username: '', password: '' }
 function Login() {
     const [credenciales, setCredenciales] = useState(CREDENCIALES_INICIALES)
     const [error, setError] = useState('')
-    const [mostrarPassword, setMostrarPassword] = useState(false)
     const { autenticado, iniciarSesion } = useAuth()
     const location = useLocation()
     const navigate = useNavigate()
@@ -62,25 +60,14 @@ function Login() {
 
                     <label className={styles.campo}>
                         <span>Contraseña</span>
-                        <span className={styles.passwordControl}>
-                            <input
-                                type={mostrarPassword ? 'text' : 'password'}
-                                name="password"
-                                value={credenciales.password}
-                                onChange={handleChange}
-                                autoComplete="current-password"
-                                required
-                            />
-                            <button
-                                type="button"
-                                className={styles.botonPassword}
-                                onClick={() => setMostrarPassword(prev => !prev)}
-                                aria-label={mostrarPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
-                                title={mostrarPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
-                            >
-                                {mostrarPassword ? <IconoOjoOculto /> : <IconoOjo />}
-                            </button>
-                        </span>
+                        <input
+                            type="password"
+                            name="password"
+                            value={credenciales.password}
+                            onChange={handleChange}
+                            autoComplete="current-password"
+                            required
+                        />
                     </label>
 
                     {error && <p className={styles.error} role="alert">{error}</p>}
