@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useAuth } from '../../context/Auth'
 import { useRetroalimentacion } from '../../context/Retroalimentacion'
 import { useConfirmar } from '../../context/Confirmar'
 import { obtenerObras, registrarObra, actualizarObra, eliminarObra } from '../../services/obrasService'
@@ -11,6 +12,7 @@ function Obras() {
   const [mostrarFormulario, setMostrarFormulario] = useState(false)
   const [obraAEditar, setObraAEditar] = useState({ titulo: '', clasificacion: '', autores: [] })
   const [obras, setObras] = useState([])
+  const { esAdmin, puedeEscribir, listo, autenticado } = useAuth()
   const mostrarMensaje = useRetroalimentacion()
   const confirmarAccion = useConfirmar()
 
@@ -19,11 +21,18 @@ function Obras() {
       const obrasObtenidas = await obtenerObras()
       setObras(obrasObtenidas)
     } catch (error) {
-      mostrarMensaje({tipo: 'Error', texto: 'No se pudieron cargar las obras, intentelo nuevamente'})
+      console.error('Error al cargar obras:', error)
+      const texto = error.code === 'permission-denied'
+        ? 'Firestore bloqueó la lectura. Actualiza las reglas de seguridad en Firebase Console.'
+        : 'No se pudieron cargar las obras, intentelo nuevamente'
+      mostrarMensaje({ tipo: 'Error', texto })
     }
   }
 
-  useEffect(() => { cargarObras() }, [])
+  useEffect(() => {
+    if (!listo || !autenticado) return
+    cargarObras()
+  }, [listo, autenticado])
 
   const handleCancelarFormulario = () => {
     setMostrarFormulario(false)
@@ -32,6 +41,7 @@ function Obras() {
 
   const handleSubmitFormulario = async (e, obraFormulario) => {
     e.preventDefault()
+    if (!puedeEscribir) return
 
     // Validar que los campos no estén vacíos
     if(!obraFormulario.titulo.trim() || !obraFormulario.clasificacion || obraFormulario.autores.length === 0) {
@@ -59,11 +69,13 @@ function Obras() {
   }
 
   const handleEditarObra = (obra) => {
+    if (!puedeEscribir) return
     setObraAEditar(obra)
     setMostrarFormulario(true)
   }
 
   const handleEliminarObra = async (obra) => {
+    if (!puedeEscribir) return
     const confirmar = await confirmarAccion('¿Estás seguro que deseas eliminar esta obra?')
     if (!confirmar) return
 
@@ -83,11 +95,13 @@ function Obras() {
           <h1 className={styles.titulo}>Obras</h1>
           <p className={styles.subtitulo}>Gestión de obras del Consejo Editorial</p>
         </div>
-        <button type="button" className={styles.botonNuevo} onClick={() => setMostrarFormulario(true)}>
-          Nueva Obra
-        </button>
+        {puedeEscribir && (
+          <button type="button" className={styles.botonNuevo} onClick={() => setMostrarFormulario(true)}>
+            Nueva Obra
+          </button>
+        )}
       </div>
-      {mostrarFormulario && (
+      {puedeEscribir && mostrarFormulario && (
         <FormularioObra 
           obraAEditar={obraAEditar}
           onGuardar={handleSubmitFormulario}
@@ -97,10 +111,11 @@ function Obras() {
       {obras.length > 0 ? (
         <TablaObras 
           obras={obras}
-          botones={[
+          puedeVerDetalle={esAdmin}
+          botones={puedeEscribir ? [
                 {texto: 'Editar', onClick: handleEditarObra},
                 {texto: 'Eliminar', onClick: handleEliminarObra}
-          ]}
+          ] : []}
         />
       ) : (
         <p className={styles.vacio}>Aun no hay obras registradas</p>

@@ -3,7 +3,7 @@ import { calcularPorcentajeAvance } from '../../../utils/obraUtils';
 import { IconoEditar, IconoEliminar } from '../../../components/Iconos'
 import styles from '../styles/FilaObra.module.css'
 
-function FilaObra({ obra, botones }) {
+function FilaObra({ obra, botones, puedeVerDetalle }) {
     const porcentaje = calcularPorcentajeAvance(obra.estado)
 
     const actualizarPosicionTooltip = (event) => {
@@ -16,28 +16,34 @@ function FilaObra({ obra, botones }) {
         <tr className={styles.fila}>
             <td className={styles.celdaObra}>
                 <div className={styles.tituloAcciones}>
-                    <Link to={`/obras/${obra.id}`} className={styles.titulo}>{obra.titulo}</Link>
-                    <div className={styles.acciones}>
-                        {botones.map((boton, index) => {
-                            const etiqueta = typeof boton.texto === 'function' ? boton.texto(obra) : boton.texto;
-                            const esIcono = etiqueta === 'Editar' || etiqueta === 'Eliminar'
-                            const claseBoton = etiqueta === 'Eliminar' ? styles.botonEliminar : styles.boton
-                            return (
-                                <button
-                                    key={index}
-                                    onClick={() => boton.onClick(obra)}
-                                    type="button"
-                                    className={esIcono ? `${claseBoton} ${styles.botonIcono}` : claseBoton}
-                                    aria-label={esIcono ? etiqueta : undefined}
-                                    title={esIcono ? etiqueta : undefined}
-                                >
-                                    {etiqueta === 'Editar' ? <IconoEditar />
-                                        : etiqueta === 'Eliminar' ? <IconoEliminar />
-                                        : etiqueta}
-                                </button>
-                            )
-                        })}
-                    </div>
+                    {puedeVerDetalle ? (
+                        <Link to={`/obras/${obra.id}`} className={styles.titulo}>{obra.titulo}</Link>
+                    ) : (
+                        <span className={styles.tituloSoloLectura}>{obra.titulo}</span>
+                    )}
+                    {botones.length > 0 && (
+                        <div className={styles.acciones}>
+                            {botones.map((boton, index) => {
+                                const etiqueta = typeof boton.texto === 'function' ? boton.texto(obra) : boton.texto;
+                                const esIcono = etiqueta === 'Editar' || etiqueta === 'Eliminar'
+                                const claseBoton = etiqueta === 'Eliminar' ? styles.botonEliminar : styles.boton
+                                return (
+                                    <button
+                                        key={index}
+                                        onClick={() => boton.onClick(obra)}
+                                        type="button"
+                                        className={esIcono ? `${claseBoton} ${styles.botonIcono}` : claseBoton}
+                                        aria-label={esIcono ? etiqueta : undefined}
+                                        title={esIcono ? etiqueta : undefined}
+                                    >
+                                        {etiqueta === 'Editar' ? <IconoEditar />
+                                            : etiqueta === 'Eliminar' ? <IconoEliminar />
+                                            : etiqueta}
+                                    </button>
+                                )
+                            })}
+                        </div>
+                    )}
                 </div>
             </td>
             <td className={styles.celdaClasificacion}>

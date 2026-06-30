@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useAuth } from '../../context/Auth'
 import { useConfirmar } from '../../context/Confirmar'
 import { useRetroalimentacion } from '../../context/Retroalimentacion'
 import { registrarRevisor, obtenerRevisores, eliminarRevisor, actualizarRevisor } from '../../services/revisoresService'
@@ -12,6 +13,7 @@ function Revisores() {
     const [mostrarFormulario, setMostrarFormulario] = useState(false)
     const [revisorFormulario, setRevisorFormulario] = useState({nombre:'', apellidoPaterno:'', apellidoMaterno:'', correo:''})
     const [revisores, setRevisores] = useState([])
+    const { puedeEscribir } = useAuth()
 
     const confirmarAccion = useConfirmar()
     const mostrarMensaje = useRetroalimentacion()
@@ -40,6 +42,7 @@ function Revisores() {
     
     const handleSubmitFormulario = async (e) => {
         e.preventDefault()
+        if (!puedeEscribir) return
 
         // Validar que los campos no estén vacíos
         if(!revisorFormulario.nombre.trim() || !revisorFormulario.apellidoPaterno.trim() || !revisorFormulario.apellidoMaterno.trim() || !revisorFormulario.correo.trim()) {
@@ -69,11 +72,13 @@ function Revisores() {
     }
 
     const handleEditarRevisor = (revisor) => {
+        if (!puedeEscribir) return
         setMostrarFormulario(true)
         setRevisorFormulario(revisor)
     }
 
     const handleEliminarRevisor = async (revisor) => {
+        if (!puedeEscribir) return
         const confirmar = await confirmarAccion('¿Estás seguro de que deseas eliminar este revisor?')
         if (!confirmar) return
         
@@ -91,11 +96,13 @@ function Revisores() {
         <div className={styles.pagina}>
             <div className={styles.encabezado}>
                 <h1 className={styles.titulo}>Revisores</h1>
-                <button type="button" className={styles.botonNuevo} onClick={() => setMostrarFormulario(true)}>
-                    Nuevo Revisor
-                </button>
+                {puedeEscribir && (
+                    <button type="button" className={styles.botonNuevo} onClick={() => setMostrarFormulario(true)}>
+                        Nuevo Revisor
+                    </button>
+                )}
             </div>
-            {mostrarFormulario && (
+            {puedeEscribir && mostrarFormulario && (
                 <FormularioRevisor 
                     revisor={revisorFormulario}
                     onChangeRevisor={handleChangeRevisor}
@@ -106,10 +113,10 @@ function Revisores() {
             {revisores.length > 0 ? (
                 <ListaRevisores 
                     revisores={revisores}
-                    botones={[
+                    botones={puedeEscribir ? [
                         { texto: 'Editar', onClick: handleEditarRevisor },
                         { texto: 'Eliminar', onClick: handleEliminarRevisor }
-                    ]}
+                    ] : []}
                 />
             ): (
                 <p className={styles.vacio}>No hay revisores registrados</p>

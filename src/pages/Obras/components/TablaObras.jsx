@@ -1,13 +1,14 @@
 import FilaObra from './FilaObra'
 import styles from '../styles/TablaObras.module.css'
 
-function TablaObras({ obras, botones }) {
+function TablaObras({ obras, botones, puedeVerDetalle }) {
 
     const filasObra = obras.map(obra => (
         <FilaObra 
             key={obra.id}
             obra={obra}
             botones={botones}
+            puedeVerDetalle={puedeVerDetalle}
         />
     ))
     

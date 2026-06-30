@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
+import { useAuth } from '../../context/Auth';
 import { useRetroalimentacion } from '../../context/Retroalimentacion';
 import { obtenerObra, actualizarObra } from '../../services/obrasService';
 import { obtenerEtapasCompletadas, aplicarEfectosCambioClasificacion } from '../../utils/obraUtils';
@@ -31,6 +32,7 @@ function DetallesObra() {
     const botonesEtapaRef = useRef([]);
     const etapasCompletadasPrevRef = useRef(null);
     const transicionTimeoutRef = useRef(null);
+    const { puedeEscribir } = useAuth();
     const mostrarMensaje = useRetroalimentacion();
     const { obraId } = useParams();
 
@@ -54,6 +56,7 @@ function DetallesObra() {
 
     const handleSubmitFormulario = async (e, obraFormulario) => {
         e.preventDefault()
+        if (!puedeEscribir) return
 
         if(!obraFormulario.titulo.trim() || !obraFormulario.clasificacion || obraFormulario.autores.length === 0) {
             mostrarMensaje({tipo: 'Error', texto: 'Por favor, completa todos los campos'})
@@ -80,6 +83,7 @@ function DetallesObra() {
     }
 
     const activarEdicionEtapa = (index) => {
+        if (!puedeEscribir) return
         if (botonEnPulso === index) {
             setBotonEnPulso(null)
         }
@@ -147,7 +151,7 @@ function DetallesObra() {
 
     return (
         <>  
-            {editarObra && (
+            {puedeEscribir && editarObra && (
                 <FormularioObra
                     obraAEditar={obra}
                     onGuardar={handleSubmitFormulario}
@@ -156,7 +160,7 @@ function DetallesObra() {
             )}
             {obra && (
                 <div className={styles.pagina}>
-                    <TarjetaObra obra={obra} onEditar={() => setEditarObra(true)} />
+                    <TarjetaObra obra={obra} onEditar={puedeEscribir ? () => setEditarObra(true) : undefined} />
                     {ETAPAS_OBRA.map((etapa, index) => {
                         const EtapaComponente = etapa.componente
                         const enEdicion = etapasEnEdicion[index]
@@ -173,7 +177,7 @@ function DetallesObra() {
                         return (
                             <section key={etapa.nombre} className={claseEtapa}>
                                 <h2 className={styles.tituloEtapa}>{etapa.nombre}</h2>
-                                {( puedeEditar && enEdicion ) ? (
+                                {( puedeEscribir && puedeEditar && enEdicion ) ? (
                                     <div className={styles.contenidoEtapa}>
                                         <EtapaComponente
                                             obra={obra}
@@ -190,7 +194,7 @@ function DetallesObra() {
                                                 styles.botonEtapa,
                                                 botonEnPulso === index ? styles.botonPulso : '',
                                             ].join(' ')}
-                                            disabled={!puedeEditar}
+                                            disabled={!puedeEscribir || !puedeEditar}
                                             onClick={() => activarEdicionEtapa(index)}
                                             type="button"
                                         >Editar</button>

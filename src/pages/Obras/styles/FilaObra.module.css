@@ -44,6 +44,11 @@
   text-decoration: underline;
 }
 
+.tituloSoloLectura {
+  color: var(--text-h);
+  font-weight: 600;
+}
+
 .acciones {
   display: flex;
   gap: 0.4rem;

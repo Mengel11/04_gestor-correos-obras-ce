@@ -1,5 +1,7 @@
-import { Link, NavLink, Outlet } from 'react-router-dom'
-import { IconoGitHub, IconoLinkedIn, IconoLogo } from './Iconos'
+import { useEffect, useRef, useState } from 'react'
+import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/Auth'
+import { IconoFlechaAbajo, IconoGitHub, IconoLinkedIn, IconoLogo, IconoUsuario } from './Iconos'
 import styles from './Layout.module.css'
 
 const URL_REPO = 'https://github.com/Mengel11/04_gestor-correos-obras-ce'
@@ -8,6 +10,37 @@ const URL_LINKEDIN_MAURICIO = 'https://www.linkedin.com/in/'
 
 function Layout() {
     const año = new Date().getFullYear()
+    const { usuario, esAdmin, cerrarSesion } = useAuth()
+    const navigate = useNavigate()
+    const [menuAbierto, setMenuAbierto] = useState(false)
+    const menuRef = useRef(null)
+
+    useEffect(() => {
+        if (!menuAbierto) return
+
+        const cerrarAlClickExterno = (event) => {
+            if (!menuRef.current?.contains(event.target)) {
+                setMenuAbierto(false)
+            }
+        }
+
+        const cerrarConEscape = (event) => {
+            if (event.key === 'Escape') setMenuAbierto(false)
+        }
+
+        document.addEventListener('mousedown', cerrarAlClickExterno)
+        document.addEventListener('keydown', cerrarConEscape)
+        return () => {
+            document.removeEventListener('mousedown', cerrarAlClickExterno)
+            document.removeEventListener('keydown', cerrarConEscape)
+        }
+    }, [menuAbierto])
+
+    const handleCerrarSesion = async () => {
+        setMenuAbierto(false)
+        await cerrarSesion()
+        navigate('/login', { replace: true })
+    }
 
     return (
         <div className={styles.layout}>
@@ -15,41 +48,76 @@ function Layout() {
                 <Link to="/" className={styles.logo} aria-label="Gestor de obras — Inicio">
                     <IconoLogo />
                 </Link>
-                <nav className={styles.nav}>
-                    <NavLink
-                        to="/"
-                        end
-                        className={({ isActive }) =>
-                            isActive ? `${styles.enlace} ${styles.enlaceActivo}` : styles.enlace
-                        }
-                    >
-                        Obras
-                    </NavLink>
-                    <NavLink
-                        to="/autores"
-                        className={({ isActive }) =>
-                            isActive ? `${styles.enlace} ${styles.enlaceActivo}` : styles.enlace
-                        }
-                    >
-                        Autores
-                    </NavLink>
-                    <NavLink
-                        to="/revisores"
-                        className={({ isActive }) =>
-                            isActive ? `${styles.enlace} ${styles.enlaceActivo}` : styles.enlace
-                        }
-                    >
-                        Revisores
-                    </NavLink>
-                    <NavLink
-                        to="/miembros-ce"
-                        className={({ isActive }) =>
-                            isActive ? `${styles.enlace} ${styles.enlaceActivo}` : styles.enlace
-                        }
-                    >
-                        Miembros CE
-                    </NavLink>
-                </nav>
+                <div className={styles.headerDerecha}>
+                    <nav className={styles.nav}>
+                        <NavLink
+                            to="/"
+                            end
+                            className={({ isActive }) =>
+                                isActive ? `${styles.enlace} ${styles.enlaceActivo}` : styles.enlace
+                            }
+                        >
+                            Obras
+                        </NavLink>
+                        <NavLink
+                            to="/autores"
+                            className={({ isActive }) =>
+                                isActive ? `${styles.enlace} ${styles.enlaceActivo}` : styles.enlace
+                            }
+                        >
+                            Autores
+                        </NavLink>
+                        <NavLink
+                            to="/revisores"
+                            className={({ isActive }) =>
+                                isActive ? `${styles.enlace} ${styles.enlaceActivo}` : styles.enlace
+                            }
+                        >
+                            Revisores
+                        </NavLink>
+                        {esAdmin && (
+                            <NavLink
+                                to="/miembros-ce"
+                                className={({ isActive }) =>
+                                    isActive ? `${styles.enlace} ${styles.enlaceActivo}` : styles.enlace
+                                }
+                            >
+                                Miembros CE
+                            </NavLink>
+                        )}
+                    </nav>
+                    <div className={styles.menuUsuario} ref={menuRef}>
+                        <button
+                            type="button"
+                            className={styles.botonMenuUsuario}
+                            onClick={() => setMenuAbierto(prev => !prev)}
+                            aria-expanded={menuAbierto}
+                            aria-haspopup="menu"
+                            aria-label="Menú de usuario"
+                        >
+                            <IconoUsuario />
+                            <span className={`${styles.flechaMenu} ${menuAbierto ? styles.flechaMenuAbierta : ''}`}>
+                                <IconoFlechaAbajo />
+                            </span>
+                        </button>
+                        {menuAbierto && (
+                            <div className={styles.menuDesplegable} role="menu">
+                                <div className={styles.menuInfo}>
+                                    <span className={styles.menuNombre}>{usuario?.nombre}</span>
+                                    <span className={styles.menuRol}>{usuario?.rol}</span>
+                                </div>
+                                <button
+                                    type="button"
+                                    role="menuitem"
+                                    className={styles.menuSalir}
+                                    onClick={handleCerrarSesion}
+                                >
+                                    Salir
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                </div>
             </header>
             <main>
                 <Outlet />
@@ -84,7 +152,7 @@ function Layout() {
                     >
                         <IconoLinkedIn />
                     </a>
-                    <a
+                    {/* <a
                         className={styles.footerIcono}
                         href={URL_LINKEDIN_MAURICIO}
                         target="_blank"
@@ -93,7 +161,7 @@ function Layout() {
                         title="Mauricio — LinkedIn"
                     >
                         <IconoLinkedIn />
-                    </a>
+                    </a> */}
                 </div>
             </footer>
         </div>

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useAuth } from '../../context/Auth'
 import { useConfirmar } from '../../context/Confirmar'
 import { useRetroalimentacion } from '../../context/Retroalimentacion'
 import { registrarAutor, obtenerAutores, eliminarAutor, actualizarAutor } from '../../services/autoresService'
@@ -12,6 +13,7 @@ function Autores() {
     const [mostrarFormulario, setMostrarFormulario] = useState(false)
     const [autorFormulario, setAutorFormulario] = useState({nombre:'', apellidoPaterno:'', apellidoMaterno:'', correo:''})
     const [autores, setAutores] = useState([])
+    const { puedeEscribir } = useAuth()
 
     const confirmarAccion = useConfirmar()
     const mostrarMensaje = useRetroalimentacion()
@@ -39,6 +41,7 @@ function Autores() {
     
     const handleSubmitFormulario = async (e) => {
         e.preventDefault()
+        if (!puedeEscribir) return
 
         // Validar que los campos no estén vacíos
         if(!autorFormulario.nombre.trim() || !autorFormulario.apellidoPaterno.trim() || !autorFormulario.apellidoMaterno.trim() || !autorFormulario.correo.trim()) {
@@ -68,11 +71,13 @@ function Autores() {
     }
 
     const handleEditarAutor = (autor) => {
+        if (!puedeEscribir) return
         setMostrarFormulario(true)
         setAutorFormulario(autor)
     }
 
     const handleEliminarAutor = async (autor) => {
+        if (!puedeEscribir) return
         const confirmar = await confirmarAccion('¿Estás seguro de que deseas eliminar este autor?')
         if (!confirmar) return
         
@@ -90,11 +95,13 @@ function Autores() {
         <div className={styles.pagina}>
             <div className={styles.encabezado}>
                 <h1 className={styles.titulo}>Autores</h1>
-                <button type="button" className={styles.botonNuevo} onClick={() => setMostrarFormulario(true)}>
-                    Nuevo Autor
-                </button>
+                {puedeEscribir && (
+                    <button type="button" className={styles.botonNuevo} onClick={() => setMostrarFormulario(true)}>
+                        Nuevo Autor
+                    </button>
+                )}
             </div>
-            {mostrarFormulario && (
+            {puedeEscribir && mostrarFormulario && (
                 <FormularioAutor 
                     autor={autorFormulario}
                     onChangeAutor={handleChangeAutor}
@@ -105,10 +112,10 @@ function Autores() {
             {autores.length > 0 ? (
                 <ListaAutores 
                     autores={autores}
-                    botones={[
+                    botones={puedeEscribir ? [
                         { texto: 'Editar', onClick: handleEditarAutor },
                         { texto: 'Eliminar', onClick: handleEliminarAutor }
-                    ]}
+                    ] : []}
                 />
             ): (
                 <p className={styles.vacio}>No hay autores registrados</p>

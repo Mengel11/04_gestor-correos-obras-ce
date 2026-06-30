@@ -55,15 +55,17 @@ function TarjetaObra({ obra, onEditar }) {
                         </div>
                     </div>
                 </div>
-                <button
-                    type="button"
-                    className={styles.botonModificar}
-                    onClick={onEditar}
-                    aria-label="Modificar obra"
-                    title="Modificar"
-                >
-                    <IconoEditar />
-                </button>
+                {onEditar && (
+                    <button
+                        type="button"
+                        className={styles.botonModificar}
+                        onClick={onEditar}
+                        aria-label="Modificar obra"
+                        title="Modificar"
+                    >
+                        <IconoEditar />
+                    </button>
+                )}
             </div>
 
             <div className={styles.zonaEstado}>
